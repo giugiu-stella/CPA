@@ -1,2 +1,2 @@
-# CPA MEGA MAN
+# CPA - MEGA MAN
 Projet final CPA
