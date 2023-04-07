@@ -1,4 +1,10 @@
 import * as conf from './conf'
+import * as perso from './game'
+
+type Player = perso.Player
+type CoordJoueur = perso.Coord
+
+
 type Coord = { x: number; y: number; dx: number; dy: number }
 type Ball = { coord: Coord; life: number; invincible?: number }
 type Size = { height: number; width: number }
@@ -8,12 +14,14 @@ export type State = {
   size: Size
   player: Ball
   endOfGame: boolean
+  joueur : Player
 }
 
 const dist2 = (o1: Coord, o2: Coord) =>
   Math.pow(o1.x - o2.x, 2) + Math.pow(o1.y - o2.y, 2)
 
 const iterate =
+  (player: Player) =>
   (bound: Size) =>
   (ball: Ball): Ball => {
     const invincible = ball.invincible ? ball.invincible - 1 : ball.invincible
@@ -85,7 +93,25 @@ const collideBoing = (p1: Coord, p2: Coord) => {
   p2.y += p2.dy
 }
 
+let cpt = 0
+
+let t = 0.0;
+
+let currentTime = Date.now()
+
+let friction = 0.95
+
+
 export const step = (state: State) => {
+
+  
+
+  let newTime = Date.now();
+  let frameTime = newTime - currentTime;
+  currentTime = newTime;
+   
+
+
   state.pos.map((p1, i, arr) => {
     arr.slice(i + 1).map((p2) => {
       if (collide(p1.coord, p2.coord)) {
@@ -101,6 +127,52 @@ export const step = (state: State) => {
       }
     })
   })
+
+  if (frameTime > 1000/60) {
+
+    newTime = currentTime - (frameTime % (1000/60));
+
+    document.addEventListener('keydown', (event) => {
+      var name = event.key;
+  
+      console.log(state.joueur.pos.x + " , " +state.joueur.pos.y);
+      if(name==='z'){
+        if (state.joueur.velY > -state.joueur.speed) {
+          state.joueur.velY--;
+        }
+        //state.joueur.pos = perso.moveUp(state.joueur,frameTime)
+      }
+      if(name==='s'){
+        if (state.joueur.velY < state.joueur.speed) {
+          state.joueur.velY++;
+        }
+         //state.joueur.pos=perso.moveDown(state.joueur,frameTime)
+      }
+      if(name==='q'){
+        if (state.joueur.velX > -state.joueur.speed) {
+          state.joueur.velX--;
+        }
+         //state.joueur.pos= perso.moveLeft(state.joueur,frameTime)
+      }
+      if(name==='d'){
+        if (state.joueur.velX < state.joueur.speed) {
+          state.joueur.velX++;
+        }
+        // state.joueur.pos= perso.moveRight(state.joueur,frameTime)
+      }
+  
+    }, false);
+
+
+  }
+
+  state.joueur.velY *= friction;
+  state.joueur.pos.y += state.joueur.velY;
+  state.joueur.velX *= friction;
+  state.joueur.pos.x += state.joueur.velX;
+
+  
+
   if (state.player.invincible) state.player.invincible--
   state.pos.map((p1, i) => {
     if (collide(p1.coord, state.player.coord)) {
@@ -117,8 +189,8 @@ export const step = (state: State) => {
   })
   return {
     ...state,
-    player: iterate(state.size)(state.player),
-    pos: state.pos.map(iterate(state.size)).filter((p) => p.life > 0),
+    player: iterate(state.joueur)(state.size)(state.player),
+    pos: state.pos.map(iterate(state.joueur)(state.size)).filter((p) => p.life > 0),
   }
 }
 

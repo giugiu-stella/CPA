@@ -1,10 +1,42 @@
 import * as conf from './conf'
 import { State } from './state'
+import imageMur from './images/mur.png'
+import imageCoeur from './images/coeur.png'
+import imagePerso from './images/megaMan_static1.png'
+
 const COLORS = {
   RED: '#ff0000',
   GREEN: '#008800',
   BLUE: '#0000ff',
 }
+
+
+
+
+let stateImageMur = false
+let stateImageCoeur = false
+let stateImagePerso = false
+
+const imageCoeurUrl = new Image();
+const imageMurUrl = new Image();
+const imagePersoUrl = new Image();
+
+imageCoeurUrl.src = imageCoeur;
+imageMurUrl.src = imageMur;
+imagePersoUrl.src = imagePerso;
+
+imageMurUrl.onload = () => {
+  stateImageMur = true
+}
+
+imageCoeurUrl.onload = () => {
+  stateImageCoeur = true
+}
+
+imagePersoUrl.onload = () => {
+  stateImagePerso = true
+}
+
 
 const toDoubleHexa = (n: number) =>
   n < 16 ? '0' + n.toString(16) : n.toString(16)
@@ -65,7 +97,8 @@ const drawCirle = (
 }
 
 const diplayGameText = (ctx: CanvasRenderingContext2D) => (state: State) => {
-  ctx.font = '96px arial'
+  
+  /*ctx.font = '96px arial'
   ctx.strokeText(`life ${state.player.life}`, 20, 100)
   ctx.strokeText(
     `balls life ${state.pos
@@ -73,7 +106,16 @@ const diplayGameText = (ctx: CanvasRenderingContext2D) => (state: State) => {
       .reduce((acc, val) => acc + val, 0)}`,
     20,
     200
-  )
+  )*/
+  if(stateImageMur)
+    ctx.drawImage(imageMurUrl,0,680,1400,100);
+
+  if(stateImageCoeur)
+    ctx.drawImage(imageCoeurUrl,0,0,100,50);
+    ctx.drawImage(imageCoeurUrl,100,0,100,50);
+
+  
+
 }
 
 const computeColor = (life: number, maxLife: number, baseColor: string) =>
@@ -82,6 +124,8 @@ const computeColor = (life: number, maxLife: number, baseColor: string) =>
 export const render =
   (ctx: CanvasRenderingContext2D, props: RenderProps) => (state: State) => {
     clear(ctx)
+
+    diplayGameText(ctx)(state)
     state.pos.map((c) =>
       drawCirle(
         ctx,
@@ -96,10 +140,13 @@ export const render =
       state.player.coord,
       computeColor(state.player.life, conf.PLAYERLIFE, COLORS.BLUE)
     )
-    diplayGameText(ctx)(state)
-    if (state.endOfGame) {
+    if(stateImagePerso){
+      ctx.drawImage(imagePersoUrl,state.joueur.pos.x,state.joueur.pos.y,200,200);
+    }
+    
+    /*if (state.endOfGame) {
       const text = 'END'
       ctx.font = '48px'
       ctx.strokeText(text, state.size.width / 2 - 100, state.size.height / 2)
-    }
+    }*/
   }

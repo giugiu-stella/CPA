@@ -3,6 +3,8 @@ import { useRef, useEffect } from 'react'
 import { State, step, click, mouseMove, endOfGame, clickEnd } from './state'
 import { render, RenderProps } from './renderer'
 
+import * as perso from './game'
+
 const randomInt = (max: number) => Math.floor(Math.random() * max)
 const randomSign = () => Math.sign(Math.random() - 0.5)
 
@@ -16,6 +18,18 @@ const initCanvas =
 
 const Canvas = ({ height, width }: { height: number; width: number }) => {
   const initialState: State = {
+
+    joueur: {
+      pos: {
+        x: 50,
+        y: 50,
+      },
+      HP : 3,
+      speed : 10,
+      velX : 0,
+      velY : 0,
+    },
+
     pos: new Array(20).fill(1).map((_) => ({
       life: conf.BALLLIFE,
       coord: {
@@ -47,6 +61,22 @@ const Canvas = ({ height, width }: { height: number; width: number }) => {
   const downTS = useRef<number>(Date.now())
 
   const iterate = (ctx: CanvasRenderingContext2D) => {
+    /*const fps = 60;
+    const interval = 1000 / fps;
+    let lastRenderTime = 0;
+
+    setInterval(() => {
+      const currentTime = Date.now();
+      const elapsed = currentTime - lastRenderTime;
+      if (elapsed > interval) {
+        lastRenderTime = currentTime;
+
+        // votre code de rendu de canvas ici
+      }
+  }, interval);*/
+
+
+
     state.current = step(state.current)
     state.current.endOfGame = !endOfGame(state.current)
     render(ctx, {
