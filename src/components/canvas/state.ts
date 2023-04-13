@@ -128,35 +128,64 @@ export const step = (state: State) => {
     })
   })
 
-  if (frameTime > 1000/60) {
+  //if (frameTime > 1000/60) {
 
-    newTime = currentTime - (frameTime % (1000/60));
+    //newTime = currentTime - (frameTime % (1000/60));
 
     document.addEventListener('keydown', (event) => {
       var name = event.key;
   
-      console.log(state.joueur.pos.x + " , " +state.joueur.pos.y);
       if(name==='z'){
         if (state.joueur.velY > -state.joueur.speed) {
-          state.joueur.velY--;
+          state.joueur.velY = -7;
         }
         //state.joueur.pos = perso.moveUp(state.joueur,frameTime)
       }
       if(name==='s'){
         if (state.joueur.velY < state.joueur.speed) {
-          state.joueur.velY++;
+          state.joueur.velY=7;
         }
          //state.joueur.pos=perso.moveDown(state.joueur,frameTime)
       }
       if(name==='q'){
         if (state.joueur.velX > -state.joueur.speed) {
-          state.joueur.velX--;
+          state.joueur.velX=-7;
         }
          //state.joueur.pos= perso.moveLeft(state.joueur,frameTime)
       }
       if(name==='d'){
         if (state.joueur.velX < state.joueur.speed) {
-          state.joueur.velX++;
+          state.joueur.velX=7;
+        }
+        // state.joueur.pos= perso.moveRight(state.joueur,frameTime)
+      }
+  
+    }, false);
+
+    document.addEventListener('keyup', (event) => {
+      var name = event.key;
+  
+      if(name==='z'){
+        if (state.joueur.velY > -state.joueur.speed) {
+          state.joueur.velY = 0;
+        }
+        //state.joueur.pos = perso.moveUp(state.joueur,frameTime)
+      }
+      if(name==='s'){
+        if (state.joueur.velY < state.joueur.speed) {
+          state.joueur.velY=0;
+        }
+         //state.joueur.pos=perso.moveDown(state.joueur,frameTime)
+      }
+      if(name==='q'){
+        if (state.joueur.velX > -state.joueur.speed) {
+          state.joueur.velX=0;
+        }
+         //state.joueur.pos= perso.moveLeft(state.joueur,frameTime)
+      }
+      if(name==='d'){
+        if (state.joueur.velX < state.joueur.speed) {
+          state.joueur.velX=0;
         }
         // state.joueur.pos= perso.moveRight(state.joueur,frameTime)
       }
@@ -164,11 +193,11 @@ export const step = (state: State) => {
     }, false);
 
 
-  }
+  //}
 
-  state.joueur.velY *= friction;
+  //state.joueur.velY *= friction;
   state.joueur.pos.y += state.joueur.velY;
-  state.joueur.velX *= friction;
+  //state.joueur.velX *= friction;
   state.joueur.pos.x += state.joueur.velX;
 
   
