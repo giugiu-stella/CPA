@@ -1,9 +1,9 @@
 import * as conf from './conf'
 import { useRef, useEffect } from 'react'
 import { State, step, click, mouseMove, endOfGame, clickEnd } from './state'
-import { render, RenderProps } from './renderer'
+import { render/*, RenderProps*/ } from './renderer'
 
-import * as perso from './game'
+import * as jeu from './game'
 
 const randomInt = (max: number) => Math.floor(Math.random() * max)
 const randomSign = () => Math.sign(Math.random() - 0.5)
@@ -16,18 +16,26 @@ const initCanvas =
     requestAnimationFrame(() => iterate(ctx))
   }
 
+
+//Initialisation des plateformes (global car on les connait toutes à l'avance)
+let ensPlat = [new jeu.Plateforme({x : 400, y:520, longueur:200, largeur:70}),new jeu.Plateforme({x : 300, y:400, longueur:200, largeur:70}),
+  new jeu.Plateforme({x : 200, y:300, longueur:200, largeur:70}),new jeu.Plateforme({x : 100, y:200, longueur:200, largeur:70})]
+
+//[400, 520, 200, 70],[300, 400, 200, 70],[200, 300, 200, 70],[100, 200, 200, 70]]
+
+let i = -1
+let j = -1
 const Canvas = ({ height, width }: { height: number; width: number }) => {
   const initialState: State = {
-
     joueur: {
       pos: {
         x: 50,
         y: 50,
       },
-      HP : 3,
-      speed : 10,
-      velX : 0,
-      velY : 0,
+      HP: 3,
+      speed: 10,
+      velX: 0,
+      velY: 0,
     },
 
     pos: new Array(20).fill(1).map((_) => ({
@@ -50,6 +58,7 @@ const Canvas = ({ height, width }: { height: number; width: number }) => {
     },
     size: { height, width },
     endOfGame: true,
+    platforms: ensPlat,
   }
 
   const ref = useRef<any>()
@@ -79,10 +88,10 @@ const Canvas = ({ height, width }: { height: number; width: number }) => {
 
     state.current = step(state.current)
     state.current.endOfGame = !endOfGame(state.current)
-    render(ctx, {
+    render(ctx, /*{
       pos: posRef.current,
       scale: scaleRef.current,
-    })(state.current)
+    },*/ensPlat)(state.current)
     if (!state.current.endOfGame) requestAnimationFrame(() => iterate(ctx))
   }
 

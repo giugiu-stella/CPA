@@ -1,8 +1,21 @@
 import * as conf from './conf'
 import { State } from './state'
-import imageMur from './images/mur.png'
+import * as jeu from './game'
+
+import {cptMarche} from './state'
+
+import imageSol from './images/sol.png'
 import imageCoeur from './images/coeur.png'
 import imagePerso from './images/megaMan_static1.png'
+import fond1 from './images/background_1.png'
+import fond2 from './images/background_2.png'
+import fond3 from './images/background_3.png'
+import fond4 from './images/background_4.png'
+
+import marche1 from './images/megaMan_run1.png'
+import marche2 from './images/megaMan_run2.png'
+import marche3 from './images/megaMan_run3.png'
+import marche4 from './images/megaMan_run4.png'
 
 const COLORS = {
   RED: '#ff0000',
@@ -11,22 +24,39 @@ const COLORS = {
 }
 
 
+let frame = 0
 
-
-let stateImageMur = false
+let stateImageSol = false
 let stateImageCoeur = false
 let stateImagePerso = false
+let stateFond = false
 
 const imageCoeurUrl = new Image();
-const imageMurUrl = new Image();
+const imageSolUrl = new Image();
 const imagePersoUrl = new Image();
+const imageFond1Url = new Image();
+const imageFond2Url = new Image();
+const imageFond3Url = new Image();
+const imageFond4Url = new Image();
+const imageMarche1Url = new Image();
+const imageMarche2Url = new Image();
+const imageMarche3Url = new Image();
+const imageMarche4Url = new Image();
 
 imageCoeurUrl.src = imageCoeur;
-imageMurUrl.src = imageMur;
+imageSolUrl.src = imageSol;
 imagePersoUrl.src = imagePerso;
+imageFond1Url.src = fond1;
+imageFond2Url.src = fond2;
+imageFond3Url.src = fond3;
+imageFond4Url.src = fond4;
+imageMarche1Url.src = marche1;
+imageMarche2Url.src = marche2;
+imageMarche3Url.src = marche3;
+imageMarche4Url.src = marche4;
 
-imageMurUrl.onload = () => {
-  stateImageMur = true
+imageSolUrl.onload = () => {
+  stateImageSol = true
 }
 
 imageCoeurUrl.onload = () => {
@@ -35,6 +65,10 @@ imageCoeurUrl.onload = () => {
 
 imagePersoUrl.onload = () => {
   stateImagePerso = true
+}
+
+imageFond1Url.onload = () => {
+  stateFond = true
 }
 
 
@@ -72,7 +106,7 @@ const clear = (ctx: CanvasRenderingContext2D) => {
   ctx.fillStyle = 'white'
   ctx.fillRect(0, 0, width, height)
 }
-
+/*
 export type RenderProps = {
   pos: { x: number; y: number }
   scale: number
@@ -94,9 +128,10 @@ const drawCirle = (
     2 * Math.PI
   )
   ctx.fill()
-}
+}*/
 
-const diplayGameText = (ctx: CanvasRenderingContext2D) => (state: State) => {
+const diplayImages = (ctx: CanvasRenderingContext2D) => (state: State) => {
+  
   
   /*ctx.font = '96px arial'
   ctx.strokeText(`life ${state.player.life}`, 20, 100)
@@ -107,12 +142,44 @@ const diplayGameText = (ctx: CanvasRenderingContext2D) => (state: State) => {
     20,
     200
   )*/
-  if(stateImageMur)
-    ctx.drawImage(imageMurUrl,0,680,1400,100);
+  if(stateFond){
+    if(frame<5)
+      ctx.drawImage(imageFond1Url,0,-200,1400,1000)
+    else if (frame>=5 && frame < 10)
+      ctx.drawImage(imageFond2Url,0,-200,1400,1000)
+    else if (frame>=10 && frame < 15)
+      ctx.drawImage(imageFond3Url,0,-200,1400,1000)
+    else{
+      ctx.drawImage(imageFond4Url,0,-200,1400,1000)
+    }
+  }
+  if(stateImageSol)
+    ctx.drawImage(imageSolUrl,0,680,500,100);
+    ctx.drawImage(imageSolUrl,495,680,500,100);
+    ctx.drawImage(imageSolUrl,990,680,500,100);
 
   if(stateImageCoeur)
-    ctx.drawImage(imageCoeurUrl,0,0,100,50);
-    ctx.drawImage(imageCoeurUrl,100,0,100,50);
+    ctx.drawImage(imageCoeurUrl,0,0,75,75);
+    ctx.drawImage(imageCoeurUrl,100,0,75,75);
+    ctx.drawImage(imageCoeurUrl,200,0,75,75);
+
+  if(stateImagePerso){
+    console.log(cptMarche)
+    let cptTmp = cptMarche%60
+    if(cptTmp==-1)
+      ctx.drawImage(imagePersoUrl,state.joueur.pos.x,state.joueur.pos.y,200,200);
+    else if(cptTmp<15)
+      ctx.drawImage(imageMarche1Url,state.joueur.pos.x,state.joueur.pos.y,200,200)
+    else if (cptTmp>=15 && cptTmp < 30)
+      ctx.drawImage(imageMarche2Url,state.joueur.pos.x,state.joueur.pos.y,200,200)
+    else if (cptTmp>=30 && cptTmp < 45)
+      ctx.drawImage(imageMarche3Url,state.joueur.pos.x,state.joueur.pos.y,200,200)
+    else{
+      ctx.drawImage(imageMarche4Url,state.joueur.pos.x,state.joueur.pos.y,200,200)
+    }
+  }
+
+  
 
   
 
@@ -122,11 +189,13 @@ const computeColor = (life: number, maxLife: number, baseColor: string) =>
   rgbaTorgb(baseColor, (maxLife - life) * (1 / maxLife))
 
 export const render =
-  (ctx: CanvasRenderingContext2D, props: RenderProps) => (state: State) => {
+  (ctx: CanvasRenderingContext2D/*, props: RenderProps*/, plats: Array<jeu.Plateforme>) => (state: State) => {
     clear(ctx)
+    frame ++
+    frame = frame%20
 
-    diplayGameText(ctx)(state)
-    state.pos.map((c) =>
+    diplayImages(ctx)(state)
+    /*state.pos.map((c) =>
       drawCirle(
         ctx,
         props,
@@ -139,10 +208,13 @@ export const render =
       props,
       state.player.coord,
       computeColor(state.player.life, conf.PLAYERLIFE, COLORS.BLUE)
-    )
-    if(stateImagePerso){
-      ctx.drawImage(imagePersoUrl,state.joueur.pos.x,state.joueur.pos.y,200,200);
+    )*/
+    for(let i = 0; i<plats.length; i++){
+      ctx.fillStyle = 'black'
+      ctx.fillRect(plats[i].x, plats[i].y, plats[i].longueur, plats[i].largeur)
     }
+    
+    //console.log(plats[0][0])
     
     /*if (state.endOfGame) {
       const text = 'END'

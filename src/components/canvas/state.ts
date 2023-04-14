@@ -1,8 +1,8 @@
 import * as conf from './conf'
-import * as perso from './game'
+import * as jeu from './game'
 
-type Player = perso.Player
-type CoordJoueur = perso.Coord
+type Player = jeu.Player
+type Platform = jeu.Plateforme
 
 
 type Coord = { x: number; y: number; dx: number; dy: number }
@@ -15,12 +15,20 @@ export type State = {
   player: Ball
   endOfGame: boolean
   joueur : Player
+  platforms: Array<Platform>
 }
+
+export var cptMarche = -1
+
+const jump = (state: State) =>
+  state.joueur.velY = -20;
+
+
 
 const dist2 = (o1: Coord, o2: Coord) =>
   Math.pow(o1.x - o2.x, 2) + Math.pow(o1.y - o2.y, 2)
 
-const iterate =
+/*const iterate =
   (player: Player) =>
   (bound: Size) =>
   (ball: Ball): Ball => {
@@ -46,7 +54,7 @@ const iterate =
         dy,
       },
     }
-  }
+  }*/
 
 export const clickEnd =
   (state: State) =>
@@ -101,10 +109,19 @@ let currentTime = Date.now()
 
 let friction = 0.95
 
+let gravity = 1.25
+
+let auSol = false
+
+let currenty = 0
+
+let previousy = 0
+
 
 export const step = (state: State) => {
+  console.log(state.platforms)
 
-  
+  currenty = state.joueur.pos.y
 
   let newTime = Date.now();
   let frameTime = newTime - currentTime;
@@ -136,26 +153,31 @@ export const step = (state: State) => {
       var name = event.key;
   
       if(name==='z'){
-        if (state.joueur.velY > -state.joueur.speed) {
-          state.joueur.velY = -7;
+        if (auSol) {
+          jump(state);
+          //state.joueur.velY = -7;
         }
         //state.joueur.pos = perso.moveUp(state.joueur,frameTime)
       }
+      /*
       if(name==='s'){
         if (state.joueur.velY < state.joueur.speed) {
           state.joueur.velY=7;
         }
          //state.joueur.pos=perso.moveDown(state.joueur,frameTime)
       }
+      */
       if(name==='q'){
         if (state.joueur.velX > -state.joueur.speed) {
           state.joueur.velX=-7;
+          cptMarche++
         }
          //state.joueur.pos= perso.moveLeft(state.joueur,frameTime)
       }
       if(name==='d'){
         if (state.joueur.velX < state.joueur.speed) {
           state.joueur.velX=7;
+          cptMarche++
         }
         // state.joueur.pos= perso.moveRight(state.joueur,frameTime)
       }
@@ -165,7 +187,7 @@ export const step = (state: State) => {
     document.addEventListener('keyup', (event) => {
       var name = event.key;
   
-      if(name==='z'){
+      /*if(name==='z'){
         if (state.joueur.velY > -state.joueur.speed) {
           state.joueur.velY = 0;
         }
@@ -176,16 +198,18 @@ export const step = (state: State) => {
           state.joueur.velY=0;
         }
          //state.joueur.pos=perso.moveDown(state.joueur,frameTime)
-      }
+      }*/
       if(name==='q'){
         if (state.joueur.velX > -state.joueur.speed) {
           state.joueur.velX=0;
+          cptMarche = -1
         }
          //state.joueur.pos= perso.moveLeft(state.joueur,frameTime)
       }
       if(name==='d'){
         if (state.joueur.velX < state.joueur.speed) {
           state.joueur.velX=0;
+          cptMarche = -1
         }
         // state.joueur.pos= perso.moveRight(state.joueur,frameTime)
       }
@@ -199,6 +223,27 @@ export const step = (state: State) => {
   state.joueur.pos.y += state.joueur.velY;
   //state.joueur.velX *= friction;
   state.joueur.pos.x += state.joueur.velX;
+
+
+  
+
+  state.joueur.velY += gravity;
+
+  if(state.joueur.pos.y > 520){
+    state.joueur.pos.y = 520
+  }
+
+  console.log(state.joueur.pos.y)
+
+  if(currenty == previousy){
+    auSol = true
+  }
+  else{
+    auSol = false
+  }
+
+  previousy = currenty
+
 
   
 
@@ -218,8 +263,8 @@ export const step = (state: State) => {
   })
   return {
     ...state,
-    player: iterate(state.joueur)(state.size)(state.player),
-    pos: state.pos.map(iterate(state.joueur)(state.size)).filter((p) => p.life > 0),
+    //player: iterate(state.joueur)(state.size)(state.player),
+    //pos: state.pos.map(iterate(state.joueur)(state.size)).filter((p) => p.life > 0),
   }
 }
 

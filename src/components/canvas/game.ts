@@ -1,4 +1,4 @@
-export { type Player, type Coord, moveUp, moveDown, moveLeft, moveRight };
+export {type Player, type Coord, moveUp, moveDown, moveLeft, moveRight };
 type Coord = { x: number; y: number}
 type Player ={
     pos:Coord,
@@ -6,6 +6,15 @@ type Player ={
     speed:number,
     velX: number,
     velY: number,
+}
+export class Plateforme{
+    x: number = 0
+    y: number =0
+    longueur: number =0
+    largeur: number =0
+    public constructor(init?:Partial<Plateforme>) {
+        Object.assign(this, init);
+    }
 }
 const moveUp=(player:Player,delta:number)=>{
     return {x:player.pos.x, y:player.pos.y-(player.speed * delta)}
