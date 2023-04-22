@@ -210,7 +210,7 @@ export const render =
       computeColor(state.player.life, conf.PLAYERLIFE, COLORS.BLUE)
     )*/
     for(let i = 0; i<plats.length; i++){
-      ctx.fillStyle = 'black'
+      ctx.fillStyle = 'red'
       ctx.fillRect(plats[i].x, plats[i].y, plats[i].longueur, plats[i].largeur)
     }
     

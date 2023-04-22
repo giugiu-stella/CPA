@@ -18,10 +18,10 @@ const initCanvas =
 
 
 //Initialisation des plateformes (global car on les connait toutes à l'avance)
-let ensPlat = [new jeu.Plateforme({x : 400, y:520, longueur:200, largeur:70}),new jeu.Plateforme({x : 300, y:400, longueur:200, largeur:70}),
-  new jeu.Plateforme({x : 200, y:300, longueur:200, largeur:70}),new jeu.Plateforme({x : 100, y:200, longueur:200, largeur:70})]
+let ensPlat = [new jeu.Plateforme({x : 400, y:400, longueur:200, largeur:70})]
 
-//[400, 520, 200, 70],[300, 400, 200, 70],[200, 300, 200, 70],[100, 200, 200, 70]]
+//new jeu.Plateforme({x : 300, y:400, longueur:200, largeur:70}),
+//new jeu.Plateforme({x : 200, y:300, longueur:200, largeur:70}),new jeu.Plateforme({x : 100, y:200, longueur:200, largeur:70}[400, 520, 200, 70],[300, 400, 200, 70],[200, 300, 200, 70],[100, 200, 200, 70]]
 
 let i = -1
 let j = -1

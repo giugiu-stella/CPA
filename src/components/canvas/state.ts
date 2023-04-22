@@ -28,34 +28,6 @@ const jump = (state: State) =>
 const dist2 = (o1: Coord, o2: Coord) =>
   Math.pow(o1.x - o2.x, 2) + Math.pow(o1.y - o2.y, 2)
 
-/*const iterate =
-  (player: Player) =>
-  (bound: Size) =>
-  (ball: Ball): Ball => {
-    const invincible = ball.invincible ? ball.invincible - 1 : ball.invincible
-    const coord = ball.coord
-    const dx =
-      (coord.x + conf.RADIUS > bound.width || coord.x < conf.RADIUS
-        ? -coord.dx
-        : coord.dx) * conf.FRICTION
-    const dy =
-      (coord.y + conf.RADIUS > bound.height || coord.y < conf.RADIUS
-        ? -coord.dy
-        : coord.dy) * conf.FRICTION
-    if (Math.abs(dx) + Math.abs(dy) < conf.MINMOVE)
-      return { ...ball, invincible, coord: { ...coord, dx: 0, dy: 0 } }
-    return {
-      ...ball,
-      invincible,
-      coord: {
-        x: coord.x + dx,
-        y: coord.y + dy,
-        dx,
-        dy,
-      },
-    }
-  }*/
-
 export const clickEnd =
   (state: State) =>
   (_event: PointerEvent): State => {
@@ -116,6 +88,37 @@ let auSol = false
 let currenty = 0
 
 let previousy = 0
+
+export const collide_plat = (state: State) => {
+  console.log(state.joueur.pos.x +" "+ state.joueur.pos.y )
+  for(let i=0; i<state.platforms.length;i++){
+
+    /*gauche*/
+    if (state.joueur.pos.x > state.platforms[i].x && state.joueur.pos.y >=state.platforms[i].y 
+      && state.joueur.pos.y<=(state.platforms[i].y + state.platforms[i].largeur)&& state.joueur.pos.x <(state.platforms[i].x +10)){
+        state.joueur.pos.x =state.platforms[i].x;
+    }
+    /*bas*/
+    if (state.joueur.pos.y < (state.platforms[i].y+state.platforms[i].largeur) && state.joueur.pos.x >state.platforms[i].x 
+      && state.joueur.pos.x<(state.platforms[i].x + state.platforms[i].longueur)&& state.joueur.pos.y> (state.platforms[i].y+state.platforms[i].largeur-35)){
+        state.joueur.pos.y =state.platforms[i].y + state.platforms[i].largeur;
+    }
+    /*droite*/
+    if (state.joueur.pos.x < (state.platforms[i].x +state.platforms[i].longueur )&& state.joueur.pos.y >=state.platforms[i].y 
+      && state.joueur.pos.y<=(state.platforms[i].y + state.platforms[i].largeur) && state.joueur.pos.x > (state.platforms[i].x +state.platforms[i].longueur -10) ){
+        state.joueur.pos.x =state.platforms[i].x +state.platforms[i].longueur;
+    }
+    /*haut*/
+    if (state.joueur.pos.y > state.platforms[i].y && state.joueur.pos.x > state.platforms[i].x 
+      && state.joueur.pos.x < (state.platforms[i].x + state.platforms[i].longueur) && (state.joueur.pos.y <state.platforms[i].y +35)){
+        state.joueur.pos.y =state.platforms[i].y;
+        state.joueur.velY=0;
+    }
+  }
+
+}
+
+
 
 
 export const step = (state: State) => {
@@ -226,13 +229,13 @@ export const step = (state: State) => {
 
 
   
-
+  
   state.joueur.velY += gravity;
 
   if(state.joueur.pos.y > 520){
     state.joueur.pos.y = 520
   }
-
+  collide_plat(state);
   console.log(state.joueur.pos.y)
 
   if(currenty == previousy){
