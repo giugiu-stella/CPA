@@ -159,27 +159,33 @@ const diplayImages = (ctx: CanvasRenderingContext2D) => (state: State) => {
     ctx.drawImage(imageSolUrl,990,680,500,100);
 
   if(stateImageCoeur)
-    ctx.drawImage(imageCoeurUrl,0,0,75,75);
-    ctx.drawImage(imageCoeurUrl,100,0,75,75);
-    ctx.drawImage(imageCoeurUrl,200,0,75,75);
+    ctx.drawImage(imageCoeurUrl,10,10,50,50);
+    ctx.drawImage(imageCoeurUrl,70,10,50,50);
+    ctx.drawImage(imageCoeurUrl,130,10,50,50);
 
   if(stateImagePerso){
     console.log(cptMarche)
     let cptTmp = cptMarche%60
     if(cptTmp==-1)
-      ctx.drawImage(imagePersoUrl,state.joueur.pos.x,state.joueur.pos.y,200,200);
+      ctx.drawImage(imagePersoUrl,state.joueur.pos.x,state.joueur.pos.y,100,100);
     else if(cptTmp<15)
-      ctx.drawImage(imageMarche1Url,state.joueur.pos.x,state.joueur.pos.y,200,200)
+      ctx.drawImage(imageMarche1Url,state.joueur.pos.x,state.joueur.pos.y,100,100)
     else if (cptTmp>=15 && cptTmp < 30)
-      ctx.drawImage(imageMarche2Url,state.joueur.pos.x,state.joueur.pos.y,200,200)
+      ctx.drawImage(imageMarche2Url,state.joueur.pos.x,state.joueur.pos.y,100,100)
     else if (cptTmp>=30 && cptTmp < 45)
-      ctx.drawImage(imageMarche3Url,state.joueur.pos.x,state.joueur.pos.y,200,200)
+      ctx.drawImage(imageMarche3Url,state.joueur.pos.x,state.joueur.pos.y,100,100)
     else{
-      ctx.drawImage(imageMarche4Url,state.joueur.pos.x,state.joueur.pos.y,200,200)
+      ctx.drawImage(imageMarche4Url,state.joueur.pos.x,state.joueur.pos.y,100,100)
     }
   }
 
-  
+/* Pour image run vers la droite :  
+context.translate(state.joueur.pos.x + 50, state.joueur.pos.y + 50);
+context.rotate(Math.PI/2);
+context.drawImage(imageMarche1Url, -100 / 2, -100/ 2, 100,100);
+*/
+
+/* décider si faire variable stateJoueurGauche et stateJoueurDroite  */
 
   
 
