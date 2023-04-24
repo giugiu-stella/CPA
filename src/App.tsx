@@ -1,3 +1,4 @@
+import React from 'react'
 import { useRef, useEffect, useState } from 'react'
 import Loader from './components/loader'
 import Canvas from './components/canvas'

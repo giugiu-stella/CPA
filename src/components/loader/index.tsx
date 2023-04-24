@@ -1,4 +1,5 @@
 import './loader.css'
+import React from 'react'
 
 const loader = () => (
   <div className="lds-ellipsis">

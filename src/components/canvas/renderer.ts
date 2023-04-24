@@ -2,7 +2,7 @@ import * as conf from './conf'
 import { State } from './state'
 import * as jeu from './game'
 
-import {cptMarche} from './state'
+import {walkcycle} from './state'
 
 import imageSol from './images/sol.png'
 import imageCoeur from './images/coeur.png'
@@ -129,7 +129,7 @@ const drawCirle = (
   )
   ctx.fill()
 }*/
-
+let cptTmp = 0
 const diplayImages = (ctx: CanvasRenderingContext2D) => (state: State) => {
   
   
@@ -164,19 +164,24 @@ const diplayImages = (ctx: CanvasRenderingContext2D) => (state: State) => {
     ctx.drawImage(imageCoeurUrl,130,10,50,50);
 
   if(stateImagePerso){
-    console.log(cptMarche)
-    let cptTmp = cptMarche%60
-    if(cptTmp==-1)
-      ctx.drawImage(imagePersoUrl,state.joueur.pos.x,state.joueur.pos.y,100,100);
-    else if(cptTmp<15)
-      ctx.drawImage(imageMarche1Url,state.joueur.pos.x,state.joueur.pos.y,100,100)
-    else if (cptTmp>=15 && cptTmp < 30)
-      ctx.drawImage(imageMarche2Url,state.joueur.pos.x,state.joueur.pos.y,100,100)
-    else if (cptTmp>=30 && cptTmp < 45)
-      ctx.drawImage(imageMarche3Url,state.joueur.pos.x,state.joueur.pos.y,100,100)
+    
+    console.log("frame: " + cptTmp)
+    if(walkcycle==false)
+      ctx.drawImage(imagePersoUrl,state.joueur.pos.x,state.joueur.pos.y,120,120);
     else{
-      ctx.drawImage(imageMarche4Url,state.joueur.pos.x,state.joueur.pos.y,100,100)
+      cptTmp= (cptTmp+1)%60
+      if(cptTmp<15)
+        ctx.drawImage(imageMarche1Url,state.joueur.pos.x,state.joueur.pos.y,120,120)
+      else if (cptTmp>=15 && cptTmp < 30)
+        ctx.drawImage(imageMarche2Url,state.joueur.pos.x,state.joueur.pos.y,120,120)
+      else if (cptTmp>=30 && cptTmp < 45)
+        ctx.drawImage(imageMarche3Url,state.joueur.pos.x,state.joueur.pos.y,120,120)
+      else{
+        ctx.drawImage(imageMarche4Url,state.joueur.pos.x,state.joueur.pos.y,120,120)
+      }
     }
+    
+    
   }
 
 /* Pour image run vers la droite :  

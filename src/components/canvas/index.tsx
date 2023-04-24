@@ -1,3 +1,4 @@
+import React from 'react'
 import * as conf from './conf'
 import { useRef, useEffect } from 'react'
 import { State, step, click, mouseMove, endOfGame, clickEnd } from './state'

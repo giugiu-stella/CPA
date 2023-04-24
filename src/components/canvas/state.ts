@@ -18,7 +18,7 @@ export type State = {
   platforms: Array<Platform>
 }
 
-export var cptMarche = -1
+export var walkcycle = false
 
 const jump = (state: State) =>
   state.joueur.velY = -20;
@@ -173,14 +173,14 @@ export const step = (state: State) => {
       if(name==='q'){
         if (state.joueur.velX > -state.joueur.speed) {
           state.joueur.velX=-7;
-          cptMarche++
+          walkcycle = true
         }
          //state.joueur.pos= perso.moveLeft(state.joueur,frameTime)
       }
       if(name==='d'){
         if (state.joueur.velX < state.joueur.speed) {
           state.joueur.velX=7;
-          cptMarche++
+          walkcycle = true
         }
         // state.joueur.pos= perso.moveRight(state.joueur,frameTime)
       }
@@ -205,14 +205,14 @@ export const step = (state: State) => {
       if(name==='q'){
         if (state.joueur.velX > -state.joueur.speed) {
           state.joueur.velX=0;
-          cptMarche = -1
+          walkcycle = false
         }
          //state.joueur.pos= perso.moveLeft(state.joueur,frameTime)
       }
       if(name==='d'){
         if (state.joueur.velX < state.joueur.speed) {
           state.joueur.velX=0;
-          cptMarche = -1
+          walkcycle = false
         }
         // state.joueur.pos= perso.moveRight(state.joueur,frameTime)
       }
