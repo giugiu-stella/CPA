@@ -1,7 +1,7 @@
 import React from 'react'
 import * as conf from './conf'
 import { useRef, useEffect } from 'react'
-import { State, step, click, mouseMove, endOfGame, clickEnd } from './state'
+import { State, step, mouseMove, endOfGame } from './state'
 import { render/*, RenderProps*/ } from './renderer'
 
 import * as jeu from './game'
@@ -19,7 +19,7 @@ const initCanvas =
 
 
 //Initialisation des plateformes (global car on les connait toutes à l'avance)
-let ensPlat = [new jeu.Plateforme({x : 400, y:400, longueur:200, largeur:70})]
+let ensPlat = [new jeu.Plateforme({x : 400, y:400, longueur:200, largeur:70}), new jeu.Plateforme({x : 800, y:470, longueur:200, largeur:70}), new jeu.Plateforme({x : 1200, y:615, longueur:70, largeur:70})]
 
 //new jeu.Plateforme({x : 300, y:400, longueur:200, largeur:70}),
 //new jeu.Plateforme({x : 200, y:300, longueur:200, largeur:70}),new jeu.Plateforme({x : 100, y:200, longueur:200, largeur:70}[400, 520, 200, 70],[300, 400, 200, 70],[200, 300, 200, 70],[100, 200, 200, 70]]
@@ -96,13 +96,6 @@ const Canvas = ({ height, width }: { height: number; width: number }) => {
     if (!state.current.endOfGame) requestAnimationFrame(() => iterate(ctx))
   }
 
-  const onClick = (e: PointerEvent) => {
-    state.current = click(state.current)(e)
-  }
-
-  const onClickEnd = (e: PointerEvent) => {
-    state.current = clickEnd(state.current)(e)
-  }
 
   const onMove = (e: PointerEvent) => {
     state.current = mouseMove(state.current)(e)
@@ -143,13 +136,10 @@ const Canvas = ({ height, width }: { height: number; width: number }) => {
       }
     }
 
-    ref.current.addEventListener('mousedown', onClick)
-    ref.current.addEventListener('mouseup', onClickEnd)
     ref.current.addEventListener('mousemove', onMove)
     ref.current.addEventListener('wheel', onWheel)
     ref.current.addEventListener('mouseupoutside', onDragEnd)
     ref.current.addEventListener('touchendoutside', onDragEnd)
-    ref.current.addEventListener('mouseup', onClick)
     ref.current.addEventListener('mousemove', onDragMove)
     ref.current.addEventListener('mousedown', onDragStart)
     ref.current.addEventListener('touchstart', onDragStart)
@@ -160,13 +150,10 @@ const Canvas = ({ height, width }: { height: number; width: number }) => {
     initCanvas(iterate)(ref.current)
 
     return () => {
-      ref.current.removeEventListener('mousedown', onClick)
-      ref.current.removeEventListener('mouseup', onClickEnd)
       ref.current.removeEventListener('mousemove', onMove)
       ref.current.removeEventListener('wheel', onWheel)
       ref.current.removeEventListener('mouseupoutside', onDragEnd)
       ref.current.removeEventListener('touchendoutside', onDragEnd)
-      ref.current.removeEventListener('mouseup', onClick)
       ref.current.removeEventListener('mousemove', onDragMove)
       ref.current.removeEventListener('mousedown', onDragStart)
       ref.current.removeEventListener('touchstart', onDragStart)

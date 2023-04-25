@@ -2,7 +2,7 @@ import * as conf from './conf'
 import { State } from './state'
 import * as jeu from './game'
 
-import {walkcycle} from './state'
+import {walkcycle,rotate} from './state'
 
 import imageSol from './images/sol.png'
 import imageCoeur from './images/coeur.png'
@@ -23,8 +23,12 @@ const COLORS = {
   BLUE: '#0000ff',
 }
 
+let oldrotate = false
 
 let frame = 0
+
+export var dimPersoX = 120
+export var dimPersoY = 120
 
 let stateImageSol = false
 let stateImageCoeur = false
@@ -165,19 +169,27 @@ const diplayImages = (ctx: CanvasRenderingContext2D) => (state: State) => {
 
   if(stateImagePerso){
     
+
     console.log("frame: " + cptTmp)
-    if(walkcycle==false)
-      ctx.drawImage(imagePersoUrl,state.joueur.pos.x,state.joueur.pos.y,120,120);
+    if(walkcycle==false){
+      cptTmp = 0
+      //if(rotate == true){
+        //todo
+      //else{
+        ctx.drawImage(imagePersoUrl,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX,dimPersoY);
+      //}
+      
+    }
     else{
       cptTmp= (cptTmp+1)%60
       if(cptTmp<15)
-        ctx.drawImage(imageMarche1Url,state.joueur.pos.x,state.joueur.pos.y,120,120)
+        ctx.drawImage(imageMarche1Url,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX,dimPersoY)
       else if (cptTmp>=15 && cptTmp < 30)
-        ctx.drawImage(imageMarche2Url,state.joueur.pos.x,state.joueur.pos.y,120,120)
+        ctx.drawImage(imageMarche2Url,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX-30,dimPersoY)
       else if (cptTmp>=30 && cptTmp < 45)
-        ctx.drawImage(imageMarche3Url,state.joueur.pos.x,state.joueur.pos.y,120,120)
+        ctx.drawImage(imageMarche3Url,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX,dimPersoY)
       else{
-        ctx.drawImage(imageMarche4Url,state.joueur.pos.x,state.joueur.pos.y,120,120)
+        ctx.drawImage(imageMarche4Url,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX-30,dimPersoY)
       }
     }
     

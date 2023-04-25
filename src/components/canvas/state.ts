@@ -1,6 +1,8 @@
 import * as conf from './conf'
 import * as jeu from './game'
 
+import { dimPersoX , dimPersoY} from './renderer'
+
 type Player = jeu.Player
 type Platform = jeu.Plateforme
 
@@ -20,6 +22,8 @@ export type State = {
 
 export var walkcycle = false
 
+export var rotate = false
+
 const jump = (state: State) =>
   state.joueur.velY = -20;
 
@@ -28,27 +32,7 @@ const jump = (state: State) =>
 const dist2 = (o1: Coord, o2: Coord) =>
   Math.pow(o1.x - o2.x, 2) + Math.pow(o1.y - o2.y, 2)
 
-export const clickEnd =
-  (state: State) =>
-  (_event: PointerEvent): State => {
-    if (state.press) {
-      const t = (Date.now() - state.press.start) / 20000
-      const dx = state.player.coord.x - state.press.pos.x
-      const dy = state.player.coord.y - state.press.pos.y
-      state.player.coord.dx = state.player.coord.dx + dx * t
-      state.player.coord.dy = state.player.coord.dy + dy * t
-      state.press = undefined
-    }
-    return state
-  }
 
-export const click =
-  (state: State) =>
-  (event: PointerEvent): State => {
-    const { offsetX: x, offsetY: y } = event
-    state.press = { start: Date.now(), pos: { x, y } }
-    return state
-  }
 
 const collide = (o1: Coord, o2: Coord) =>
   dist2(o1, o2) < Math.pow(2 * conf.RADIUS, 2)
@@ -94,24 +78,25 @@ export const collide_plat = (state: State) => {
   for(let i=0; i<state.platforms.length;i++){
 
     /*gauche*/
-    if (state.joueur.pos.x > state.platforms[i].x && state.joueur.pos.y >=state.platforms[i].y 
-      && state.joueur.pos.y<=(state.platforms[i].y + state.platforms[i].largeur)&& state.joueur.pos.x <(state.platforms[i].x +10)){
-        state.joueur.pos.x =state.platforms[i].x;
-    }
-    /*bas*/
-    if (state.joueur.pos.y < (state.platforms[i].y+state.platforms[i].largeur) && state.joueur.pos.x >state.platforms[i].x 
-      && state.joueur.pos.x<(state.platforms[i].x + state.platforms[i].longueur)&& state.joueur.pos.y> (state.platforms[i].y+state.platforms[i].largeur-35)){
-        state.joueur.pos.y =state.platforms[i].y + state.platforms[i].largeur;
+    if (state.joueur.pos.x+dimPersoX/2 > state.platforms[i].x && state.joueur.pos.y+dimPersoY/2 >=state.platforms[i].y 
+      && state.joueur.pos.y - dimPersoY/2 <=(state.platforms[i].y + state.platforms[i].largeur)&& state.joueur.pos.x+dimPersoX/2 <(state.platforms[i].x +10)){
+        state.joueur.pos.x =state.platforms[i].x-dimPersoX/2;
     }
     /*droite*/
-    if (state.joueur.pos.x < (state.platforms[i].x +state.platforms[i].longueur )&& state.joueur.pos.y >=state.platforms[i].y 
-      && state.joueur.pos.y<=(state.platforms[i].y + state.platforms[i].largeur) && state.joueur.pos.x > (state.platforms[i].x +state.platforms[i].longueur -10) ){
-        state.joueur.pos.x =state.platforms[i].x +state.platforms[i].longueur;
+    if (state.joueur.pos.x-dimPersoX/2 < (state.platforms[i].x +state.platforms[i].longueur )&& state.joueur.pos.y+dimPersoY/2 >=state.platforms[i].y 
+      && state.joueur.pos.y - dimPersoY/2 <=(state.platforms[i].y + state.platforms[i].largeur) && state.joueur.pos.x-dimPersoX/2 > (state.platforms[i].x +state.platforms[i].longueur -10) ){
+        state.joueur.pos.x =state.platforms[i].x +state.platforms[i].longueur+dimPersoX/2;
     }
+    /*bas*/
+    if (state.joueur.pos.y-dimPersoY/2 < (state.platforms[i].y+state.platforms[i].largeur) && state.joueur.pos.x+dimPersoX/2 >state.platforms[i].x 
+      && state.joueur.pos.x-dimPersoX/2<(state.platforms[i].x + state.platforms[i].longueur)&& state.joueur.pos.y+dimPersoY/2> (state.platforms[i].y+state.platforms[i].largeur-35)){
+        state.joueur.pos.y =state.platforms[i].y + state.platforms[i].largeur + dimPersoY/2;
+    }
+    
     /*haut*/
-    if (state.joueur.pos.y > state.platforms[i].y && state.joueur.pos.x > state.platforms[i].x 
-      && state.joueur.pos.x < (state.platforms[i].x + state.platforms[i].longueur) && (state.joueur.pos.y <state.platforms[i].y +35)){
-        state.joueur.pos.y =state.platforms[i].y;
+    if (state.joueur.pos.y+dimPersoY/2 > state.platforms[i].y && state.joueur.pos.x+dimPersoX/2 > state.platforms[i].x 
+      && state.joueur.pos.x-dimPersoX/2 < (state.platforms[i].x + state.platforms[i].longueur) && (state.joueur.pos.y-dimPersoY/2 <state.platforms[i].y +35)){
+        state.joueur.pos.y =state.platforms[i].y-dimPersoY/2;
         state.joueur.velY=0;
     }
   }
@@ -173,14 +158,18 @@ export const step = (state: State) => {
       if(name==='q'){
         if (state.joueur.velX > -state.joueur.speed) {
           state.joueur.velX=-7;
-          walkcycle = true
+          walkcycle = true;
+          if(rotate == true)
+            rotate = false
         }
          //state.joueur.pos= perso.moveLeft(state.joueur,frameTime)
       }
       if(name==='d'){
         if (state.joueur.velX < state.joueur.speed) {
           state.joueur.velX=7;
-          walkcycle = true
+          walkcycle = true;
+          if(rotate == false)
+            rotate = true
         }
         // state.joueur.pos= perso.moveRight(state.joueur,frameTime)
       }
@@ -232,11 +221,10 @@ export const step = (state: State) => {
   
   state.joueur.velY += gravity;
 
-  if(state.joueur.pos.y > 520){
-    state.joueur.pos.y = 520
+  if(state.joueur.pos.y > 625){
+    state.joueur.pos.y = 625
   }
   collide_plat(state);
-  console.log(state.joueur.pos.y)
 
   if(currenty == previousy){
     auSol = true
