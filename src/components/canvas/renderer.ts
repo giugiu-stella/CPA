@@ -7,6 +7,7 @@ import {walkcycle,rotate} from './state'
 import imageSol from './images/sol.png'
 import imageCoeur from './images/coeur.png'
 import imagePerso from './images/megaMan_static1.png'
+import imagePersoD from './images/megaMan_static1_droite.png'
 import fond1 from './images/background_1.png'
 import fond2 from './images/background_2.png'
 import fond3 from './images/background_3.png'
@@ -16,6 +17,13 @@ import marche1 from './images/megaMan_run1.png'
 import marche2 from './images/megaMan_run2.png'
 import marche3 from './images/megaMan_run3.png'
 import marche4 from './images/megaMan_run4.png'
+
+import marche1d from './images/megaMan_run1_droite.png'
+import marche2d from './images/megaMan_run2_droite.png'
+import marche3d from './images/megaMan_run3_droite.png'
+import marche4d from './images/megaMan_run4_droite.png'
+
+import pf from './images/plateforme_city.png'
 
 const COLORS = {
   RED: '#ff0000',
@@ -38,6 +46,7 @@ let stateFond = false
 const imageCoeurUrl = new Image();
 const imageSolUrl = new Image();
 const imagePersoUrl = new Image();
+const imagePersoUrlD = new Image();
 const imageFond1Url = new Image();
 const imageFond2Url = new Image();
 const imageFond3Url = new Image();
@@ -46,10 +55,17 @@ const imageMarche1Url = new Image();
 const imageMarche2Url = new Image();
 const imageMarche3Url = new Image();
 const imageMarche4Url = new Image();
+const imageMarche1DUrl = new Image();
+const imageMarche2DUrl = new Image();
+const imageMarche3DUrl = new Image();
+const imageMarche4DUrl = new Image();
+const imagePF = new Image();
 
+imagePF.src = pf;
 imageCoeurUrl.src = imageCoeur;
 imageSolUrl.src = imageSol;
 imagePersoUrl.src = imagePerso;
+imagePersoUrlD.src = imagePersoD;
 imageFond1Url.src = fond1;
 imageFond2Url.src = fond2;
 imageFond3Url.src = fond3;
@@ -57,7 +73,11 @@ imageFond4Url.src = fond4;
 imageMarche1Url.src = marche1;
 imageMarche2Url.src = marche2;
 imageMarche3Url.src = marche3;
-imageMarche4Url.src = marche4;
+imageMarche4DUrl.src = marche4;
+imageMarche1DUrl.src = marche1d;
+imageMarche2DUrl.src = marche2d;
+imageMarche3DUrl.src = marche3d;
+imageMarche4DUrl.src = marche4d;
 
 imageSolUrl.onload = () => {
   stateImageSol = true
@@ -173,39 +193,40 @@ const diplayImages = (ctx: CanvasRenderingContext2D) => (state: State) => {
     console.log("frame: " + cptTmp)
     if(walkcycle==false){
       cptTmp = 0
-      //if(rotate == true){
-        //todo
-      //else{
-        ctx.drawImage(imagePersoUrl,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX,dimPersoY);
-      //}
-      
+      if(rotate == true){
+        ctx.drawImage(imagePersoUrlD,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX,dimPersoY);
+      }
+      else{
+          ctx.drawImage(imagePersoUrl,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX,dimPersoY);
+        }
     }
     else{
-      cptTmp= (cptTmp+1)%60
-      if(cptTmp<15)
-        ctx.drawImage(imageMarche1Url,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX,dimPersoY)
-      else if (cptTmp>=15 && cptTmp < 30)
-        ctx.drawImage(imageMarche2Url,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX-30,dimPersoY)
-      else if (cptTmp>=30 && cptTmp < 45)
-        ctx.drawImage(imageMarche3Url,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX,dimPersoY)
+      if(rotate==true){
+        cptTmp= (cptTmp+1)%60
+        if(cptTmp<15)
+          ctx.drawImage(imageMarche1DUrl,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX,dimPersoY)
+        else if (cptTmp>=15 && cptTmp < 30)
+          ctx.drawImage(imageMarche2DUrl,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX-30,dimPersoY)
+        else if (cptTmp>=30 && cptTmp < 45)
+          ctx.drawImage(imageMarche3DUrl,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX,dimPersoY)
+        else{
+          ctx.drawImage(imageMarche4DUrl,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX-30,dimPersoY)
+        }
+      }
       else{
-        ctx.drawImage(imageMarche4Url,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX-30,dimPersoY)
+        cptTmp= (cptTmp+1)%60
+        if(cptTmp<15)
+          ctx.drawImage(imageMarche1Url,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX,dimPersoY)
+        else if (cptTmp>=15 && cptTmp < 30)
+          ctx.drawImage(imageMarche2Url,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX-30,dimPersoY)
+        else if (cptTmp>=30 && cptTmp < 45)
+          ctx.drawImage(imageMarche3Url,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX,dimPersoY)
+        else{
+          ctx.drawImage(imageMarche4Url,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX-30,dimPersoY)
+        }
       }
     }
-    
-    
   }
-
-/* Pour image run vers la droite :  
-context.translate(state.joueur.pos.x + 50, state.joueur.pos.y + 50);
-context.rotate(Math.PI/2);
-context.drawImage(imageMarche1Url, -100 / 2, -100/ 2, 100,100);
-*/
-
-/* décider si faire variable stateJoueurGauche et stateJoueurDroite  */
-
-  
-
 }
 
 const computeColor = (life: number, maxLife: number, baseColor: string) =>
@@ -233,8 +254,9 @@ export const render =
       computeColor(state.player.life, conf.PLAYERLIFE, COLORS.BLUE)
     )*/
     for(let i = 0; i<plats.length; i++){
-      ctx.fillStyle = 'red'
-      ctx.fillRect(plats[i].x, plats[i].y, plats[i].longueur, plats[i].largeur)
+      ctx.drawImage(imagePF,plats[i].x, plats[i].y, plats[i].longueur, plats[i].largeur)
+      //ctx.fillStyle = 'red'
+      //ctx.fillRect(plats[i].x, plats[i].y, plats[i].longueur, plats[i].largeur)
     }
     
     //console.log(plats[0][0])
