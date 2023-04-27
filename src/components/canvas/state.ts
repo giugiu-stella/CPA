@@ -6,7 +6,7 @@ import { dimPersoX , dimPersoY} from './renderer'
 type Player = jeu.Player
 type Platform = jeu.Plateforme
 type Camera = jeu.Camera
-
+type Ennemi = jeu.Ennemi
 
 type Coord = { x: number; y: number; dx: number; dy: number }
 type Ball = { coord: Coord; life: number; invincible?: number }
@@ -20,21 +20,22 @@ export type State = {
   joueur : Player
   platforms: Array<Platform>
   camera: Camera
+  ennemis: Array<Ennemi>
 }
 
 export var walkcycle = false
 
 export var rotate = false
 
+export var walkcycleEnnemis = false
+
+export var rotateEnnemis = false
+
 const jump = (state: State) =>
   state.joueur.velY = -20;
 
-
-
 const dist2 = (o1: Coord, o2: Coord) =>
   Math.pow(o1.x - o2.x, 2) + Math.pow(o1.y - o2.y, 2)
-
-
 
 const collide = (o1: Coord, o2: Coord) =>
   dist2(o1, o2) < Math.pow(2 * conf.RADIUS, 2)
@@ -102,10 +103,65 @@ export const collide_plat = (state: State) => {
         state.joueur.velY=0;
     }
   }
+}
+  export const collide_ennemi = (state: State) => {
+    console.log(state.joueur.pos.x +" "+ state.joueur.pos.y )
+    for(let i=0; i<state.ennemis.length;i++){
+  
+      /*gauche*/
+      if (state.joueur.pos.x+dimPersoX/2 > state.ennemis[i].x && state.joueur.pos.y+dimPersoY/2 >=state.ennemis[i].y 
+        && state.joueur.pos.y - dimPersoY/2 <=(state.ennemis[i].y + 80)&& state.joueur.pos.x+dimPersoX/2 <(state.ennemis[i].x +10)){
+          state.joueur.pos.x =state.ennemis[i].x-dimPersoX/2;
+      }
+      /*droite*/
+      if (state.joueur.pos.x-dimPersoX/2 < (state.ennemis[i].x +80 )&& state.joueur.pos.y+dimPersoY/2 >=state.ennemis[i].y 
+        && state.joueur.pos.y - dimPersoY/2 <=(state.ennemis[i].y + 80) && state.joueur.pos.x-dimPersoX/2 > (state.ennemis[i].x +80-10) ){
+          state.joueur.pos.x =state.ennemis[i].x +80+dimPersoX/2;
+      }
+      /*bas*/
+      if (state.joueur.pos.y-dimPersoY/2 < (state.ennemis[i].y+80) && state.joueur.pos.x+dimPersoX/2 >state.ennemis[i].x 
+        && state.joueur.pos.x-dimPersoX/2<(state.ennemis[i].x + 80)&& state.joueur.pos.y+dimPersoY/2> (state.ennemis[i].y+80-35)){
+          state.joueur.pos.y =state.ennemis[i].y + 80 + dimPersoY/2;
+      }
+      
+      /*haut*/
+      if (state.joueur.pos.y+dimPersoY/2 > state.ennemis[i].y && state.joueur.pos.x+dimPersoX/2 > state.ennemis[i].x 
+        && state.joueur.pos.x-dimPersoX/2 < (state.ennemis[i].x + 80) && (state.joueur.pos.y-dimPersoY/2 <state.ennemis[i].y +35)){
+          state.joueur.pos.y =state.ennemis[i].y-dimPersoY/2;
+          state.joueur.velY=0;
+      }
+    }
 
 }
 
-
+export const collide_platEnnemis = (state: State) => {
+  for(let i=0; i<state.platforms.length;i++){
+    for(let j=0; j<state.ennemis.length;j++){
+      /*gauche*/
+      if (state.ennemis[j].x+80/2 > state.platforms[i].x && state.ennemis[j].y+80/2 >=state.platforms[i].y 
+        && state.ennemis[j].y - 80/2 <=(state.platforms[i].y + state.platforms[i].largeur)&& state.ennemis[j].x+80/2 <(state.platforms[i].x +10)){
+          state.ennemis[j].x =state.platforms[i].x-80/2;
+      }
+      /*droite*/
+      if (state.ennemis[j].x-80/2 < (state.platforms[i].x +state.platforms[i].longueur )&& state.ennemis[j].y+80/2 >=state.platforms[i].y 
+        && state.ennemis[j].y - 80/2 <=(state.platforms[i].y + state.platforms[i].largeur) && state.ennemis[j].x-80/2 > (state.platforms[i].x +state.platforms[i].longueur -10) ){
+          state.ennemis[j].x =state.platforms[i].x +state.platforms[i].longueur+80/2;
+      }
+      /*bas*/
+      if (state.ennemis[j].y-80/2 < (state.platforms[i].y+state.platforms[i].largeur) && state.ennemis[j].x+80/2 >state.platforms[i].x 
+        && state.ennemis[j].x-80/2<(state.platforms[i].x + state.platforms[i].longueur)&& state.ennemis[j].y+80/2> (state.platforms[i].y+state.platforms[i].largeur-35)){
+          state.ennemis[j].y =state.platforms[i].y + state.platforms[i].largeur + 80/2;
+      }
+      
+      /*haut*/
+      if (state.ennemis[j].y+80/2 > state.platforms[i].y && state.ennemis[j].x+80/2 > state.platforms[i].x 
+        && state.ennemis[j].x-80/2 < (state.platforms[i].x + state.platforms[i].longueur) && (state.ennemis[j].y-80/2 <state.platforms[i].y +35)){
+          state.ennemis[j].y =state.platforms[i].y-80/2;
+          state.joueur.velY=0;
+      }
+    }
+  }
+}
 
 
 export const step = (state: State) => {
@@ -229,7 +285,7 @@ export const step = (state: State) => {
     state.joueur.pos.y = 625
   }
   collide_plat(state);
-
+  collide_ennemi(state);
   if(currenty == previousy){
     auSol = true
   }
@@ -267,6 +323,28 @@ export const step = (state: State) => {
   }
 }
 
+export const stepAuto = (state: State) => {
+
+  for(let j=0; j<state.ennemis.length;j++){
+    state.ennemis[j].velX=-7;
+    walkcycleEnnemis = true;
+    if(rotateEnnemis == true)
+      rotateEnnemis = false
+    
+    
+    state.ennemis[j].y += state.joueur.velY;
+    state.ennemis[j].x += state.joueur.velX;
+
+    state.ennemis[j].velY += gravity;
+
+    collide_platEnnemis(state);
+  }
+  return {
+    ...state,
+    //player: iterate(state.joueur)(state.size)(state.player),
+    //pos: state.pos.map(iterate(state.joueur)(state.size)).filter((p) => p.life > 0),
+  }
+}
 export const mouseMove =
   (state: State) =>
   (event: PointerEvent): State => {

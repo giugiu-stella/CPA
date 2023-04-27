@@ -24,6 +24,18 @@ export class Plateforme{
         Object.assign(this, init);
     }
 }
+export class  Ennemi{
+    x: number = 0
+    y: number =0
+    HP:number=0
+    speed:number=0
+    velX: number=0
+    velY: number=0
+    public constructor(init?:Partial<Ennemi>) {
+        Object.assign(this, init);
+    }
+}
+
 const moveUp=(player:Player,delta:number)=>{
     return {x:player.pos.x, y:player.pos.y-(player.speed * delta)}
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 import * as conf from './conf'
 import { useRef, useEffect } from 'react'
-import { State, step, mouseMove, endOfGame } from './state'
+import { State, step, stepAuto,mouseMove, endOfGame } from './state'
 import { render/*, RenderProps*/ } from './renderer'
 
 import * as jeu from './game'
@@ -19,8 +19,8 @@ const initCanvas =
 
 
 //Initialisation des plateformes (global car on les connait toutes à l'avance)
-export let ensPlat = [new jeu.Plateforme({x : 400, y:400, longueur:200, largeur:70}), new jeu.Plateforme({x : 800, y:470, longueur:200, largeur:70}), new jeu.Plateforme({x : 1200, y:615, longueur:70, largeur:70})]
-
+export let ensPlat = [new jeu.Plateforme({x : 400, y:400, longueur:200, largeur:70}), new jeu.Plateforme({x : 800, y:470, longueur:200, largeur:70}), new jeu.Plateforme({x : 1200, y:615, longueur:70, largeur:70}),new jeu.Plateforme({x : 1800, y:615, longueur:70, largeur:70})]
+export let ensEnnemis = [new jeu.Ennemi({x: 1400,y: 610, HP:0, speed:10,velX:0,velY:0})]
 //new jeu.Plateforme({x : 300, y:400, longueur:200, largeur:70}),
 //new jeu.Plateforme({x : 200, y:300, longueur:200, largeur:70}),new jeu.Plateforme({x : 100, y:200, longueur:200, largeur:70}[400, 520, 200, 70],[300, 400, 200, 70],[200, 300, 200, 70],[100, 200, 200, 70]]
 
@@ -61,13 +61,13 @@ const Canvas = ({ height, width }: { height: number; width: number }) => {
     endOfGame: true,
     platforms: ensPlat,
     camera: {
-      x : 0,
-      y : 0,
-    
+      x: 0,
+      y: 0,
+
       widthC: width,
       heightC: height,
-    
-    }
+    },
+    ennemis: ensEnnemis,
   }
 
   const ref = useRef<any>()
@@ -96,6 +96,7 @@ const Canvas = ({ height, width }: { height: number; width: number }) => {
 
 
     state.current = step(state.current)
+    state.current=stepAuto(state.current)
     state.current.endOfGame = !endOfGame(state.current)
     render(ctx, /*{
       pos: posRef.current,

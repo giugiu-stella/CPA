@@ -2,7 +2,7 @@ import * as conf from './conf'
 import { State } from './state'
 import * as jeu from './game'
 
-import {walkcycle,rotate} from './state'
+import {walkcycle,rotate,walkcycleEnnemis,rotateEnnemis} from './state'
 
 import imageSol from './images/sol.png'
 import imageCoeur from './images/coeur.png'
@@ -22,10 +22,10 @@ import marche1d from './images/megaMan_run1_droite.png'
 import marche2d from './images/megaMan_run2_droite.png'
 import marche3d from './images/megaMan_run3_droite.png'
 import marche4d from './images/megaMan_run4_droite.png'
-
+import ennemi1 from './images/enemy_boule/enemy_boule_3.png'
 import pf from './images/plateforme_city.png'
 
-import { ensPlat } from './index'
+import { ensEnnemis, ensPlat } from './index'
 
 const COLORS = {
   RED: '#ff0000',
@@ -44,6 +44,7 @@ let stateImageSol = false
 let stateImageCoeur = false
 let stateImagePerso = false
 let stateFond = false
+let stateEnnemi=false
 
 const imageCoeurUrl = new Image();
 const imageSolUrl = new Image();
@@ -61,6 +62,7 @@ const imageMarche1DUrl = new Image();
 const imageMarche2DUrl = new Image();
 const imageMarche3DUrl = new Image();
 const imageMarche4DUrl = new Image();
+const imageEnnemi1Url = new Image();
 const imagePF = new Image();
 
 imagePF.src = pf;
@@ -80,6 +82,7 @@ imageMarche1DUrl.src = marche1d;
 imageMarche2DUrl.src = marche2d;
 imageMarche3DUrl.src = marche3d;
 imageMarche4DUrl.src = marche4d;
+imageEnnemi1Url.src = ennemi1;
 
 imageSolUrl.onload = () => {
   stateImageSol = true
@@ -96,7 +99,9 @@ imagePersoUrl.onload = () => {
 imageFond1Url.onload = () => {
   stateFond = true
 }
-
+imageEnnemi1Url.onload = () =>{
+  stateEnnemi = true
+}
 
 const toDoubleHexa = (n: number) =>
   n < 16 ? '0' + n.toString(16) : n.toString(16)
@@ -160,6 +165,7 @@ const drawCirle = (
 
 
 let cptTmp = 0
+let cptTmpEnnemis=0
 const diplayImages = (ctx: CanvasRenderingContext2D) => (state: State) => {
   
   //on déplace la caméra en prenant le joueur comme réferentiel
@@ -243,6 +249,65 @@ const diplayImages = (ctx: CanvasRenderingContext2D) => (state: State) => {
       }
     }
   }
+
+if(stateEnnemi){
+  if(walkcycleEnnemis==false){
+    cptTmpEnnemis = 0
+    if(rotateEnnemis == true){
+      for(let i = 0; i<ensEnnemis.length; i++){
+        ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+    }
+    }
+    else{
+      for(let i = 0; i<ensEnnemis.length; i++){
+        ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+      }
+      }
+  }
+  else{
+    if(rotateEnnemis==true){
+      cptTmpEnnemis= (cptTmpEnnemis+1)%60
+      if(cptTmpEnnemis<15)
+        for(let i = 0; i<ensEnnemis.length; i++){
+          ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+        }
+      else if (cptTmpEnnemis>=15 && cptTmpEnnemis < 30)
+        for(let i = 0; i<ensEnnemis.length; i++){
+          ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+        }
+      else if (cptTmp>=30 && cptTmp < 45)
+        for(let i = 0; i<ensEnnemis.length; i++){
+          ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+        }
+      else{
+        for(let i = 0; i<ensEnnemis.length; i++){
+          ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+        }
+      }
+    }
+    else{
+      cptTmpEnnemis= (cptTmpEnnemis+1)%60
+      if(cptTmpEnnemis<15)
+        for(let i = 0; i<ensEnnemis.length; i++){
+          ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+        }
+      else if (cptTmpEnnemis>=15 && cptTmpEnnemis < 30)
+        for(let i = 0; i<ensEnnemis.length; i++){
+          ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+        }
+      else if (cptTmp>=30 && cptTmp < 45)
+        for(let i = 0; i<ensEnnemis.length; i++){
+          ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+        }
+      else{
+        for(let i = 0; i<ensEnnemis.length; i++){
+          ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+        }
+      }
+    }
+  }
+}
+  
   ctx.restore();
 }
 
