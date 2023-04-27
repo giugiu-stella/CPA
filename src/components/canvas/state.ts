@@ -5,6 +5,7 @@ import { dimPersoX , dimPersoY} from './renderer'
 
 type Player = jeu.Player
 type Platform = jeu.Plateforme
+type Camera = jeu.Camera
 
 
 type Coord = { x: number; y: number; dx: number; dy: number }
@@ -18,6 +19,7 @@ export type State = {
   endOfGame: boolean
   joueur : Player
   platforms: Array<Platform>
+  camera: Camera
 }
 
 export var walkcycle = false
@@ -133,6 +135,8 @@ export const step = (state: State) => {
     })
   })
 
+  
+
   //if (frameTime > 1000/60) {
 
     //newTime = currentTime - (frameTime % (1000/60));
@@ -234,6 +238,10 @@ export const step = (state: State) => {
   }
 
   previousy = currenty
+
+  //mouvement Camera
+  state.camera.x = state.joueur.pos.x
+  state.camera.y = state.joueur.pos.y
 
 
   

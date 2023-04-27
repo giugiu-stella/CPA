@@ -25,6 +25,8 @@ import marche4d from './images/megaMan_run4_droite.png'
 
 import pf from './images/plateforme_city.png'
 
+import { ensPlat } from './index'
+
 const COLORS = {
   RED: '#ff0000',
   GREEN: '#008800',
@@ -73,7 +75,7 @@ imageFond4Url.src = fond4;
 imageMarche1Url.src = marche1;
 imageMarche2Url.src = marche2;
 imageMarche3Url.src = marche3;
-imageMarche4DUrl.src = marche4;
+imageMarche4Url.src = marche4;
 imageMarche1DUrl.src = marche1d;
 imageMarche2DUrl.src = marche2d;
 imageMarche3DUrl.src = marche3d;
@@ -130,6 +132,8 @@ const clear = (ctx: CanvasRenderingContext2D) => {
   ctx.fillStyle = 'white'
   ctx.fillRect(0, 0, width, height)
 }
+
+
 /*
 export type RenderProps = {
   pos: { x: number; y: number }
@@ -153,41 +157,53 @@ const drawCirle = (
   )
   ctx.fill()
 }*/
+
+
 let cptTmp = 0
 const diplayImages = (ctx: CanvasRenderingContext2D) => (state: State) => {
   
-  
-  /*ctx.font = '96px arial'
-  ctx.strokeText(`life ${state.player.life}`, 20, 100)
-  ctx.strokeText(
-    `balls life ${state.pos
-      .map((p) => p.life)
-      .reduce((acc, val) => acc + val, 0)}`,
-    20,
-    200
-  )*/
+  //on déplace la caméra en prenant le joueur comme réferentiel
+  ctx.save();
+  ctx.translate(-(state.camera.x-ctx.canvas.width/2),0);
+
+  /*Il faut s'assurer que tous les éléments du fond (points de vie etc.. suivent la caméra)
+    Mais que tous les éléments fixes (plateformes/ennemis ne la suivent pas)
+  */
   if(stateFond){
     if(frame<5)
-      ctx.drawImage(imageFond1Url,0,-200,1400,1000)
+      ctx.drawImage(imageFond1Url,state.camera.x-ctx.canvas.width/2,-200,1400,1000)
     else if (frame>=5 && frame < 10)
-      ctx.drawImage(imageFond2Url,0,-200,1400,1000)
+      ctx.drawImage(imageFond2Url,state.camera.x-ctx.canvas.width/2,-200,1400,1000)
     else if (frame>=10 && frame < 15)
-      ctx.drawImage(imageFond3Url,0,-200,1400,1000)
+      ctx.drawImage(imageFond3Url,state.camera.x-ctx.canvas.width/2,-200,1400,1000)
     else{
-      ctx.drawImage(imageFond4Url,0,-200,1400,1000)
+      ctx.drawImage(imageFond4Url,state.camera.x-ctx.canvas.width/2,-200,1400,1000)
     }
   }
-  if(stateImageSol)
+  /*if(stateImageSol){
     ctx.drawImage(imageSolUrl,0,680,500,100);
     ctx.drawImage(imageSolUrl,495,680,500,100);
     ctx.drawImage(imageSolUrl,990,680,500,100);
+  }*/
+
+  //affichage des plateformes
+  for(let i = 0; i<20; i++){
+      ctx.drawImage(imageSolUrl,i*495, 680, 500, 100)
+  }
 
   if(stateImageCoeur)
-    ctx.drawImage(imageCoeurUrl,10,10,50,50);
-    ctx.drawImage(imageCoeurUrl,70,10,50,50);
-    ctx.drawImage(imageCoeurUrl,130,10,50,50);
+    ctx.drawImage(imageCoeurUrl,10+state.camera.x-ctx.canvas.width/2,10,50,50);
+    ctx.drawImage(imageCoeurUrl,70+state.camera.x-ctx.canvas.width/2,10,50,50);
+    ctx.drawImage(imageCoeurUrl,130+state.camera.x-ctx.canvas.width/2,10,50,50);
 
+
+  for(let i = 0; i<ensPlat.length; i++){
+      ctx.drawImage(imagePF,ensPlat[i].x, ensPlat[i].y, ensPlat[i].longueur, ensPlat[i].largeur)
+      //ctx.fillStyle = 'red'
+      //ctx.fillRect(plats[i].x, plats[i].y, plats[i].longueur, plats[i].largeur)
+  }
   if(stateImagePerso){
+
     
 
     console.log("frame: " + cptTmp)
@@ -227,6 +243,7 @@ const diplayImages = (ctx: CanvasRenderingContext2D) => (state: State) => {
       }
     }
   }
+  ctx.restore();
 }
 
 const computeColor = (life: number, maxLife: number, baseColor: string) =>
@@ -253,11 +270,7 @@ export const render =
       state.player.coord,
       computeColor(state.player.life, conf.PLAYERLIFE, COLORS.BLUE)
     )*/
-    for(let i = 0; i<plats.length; i++){
-      ctx.drawImage(imagePF,plats[i].x, plats[i].y, plats[i].longueur, plats[i].largeur)
-      //ctx.fillStyle = 'red'
-      //ctx.fillRect(plats[i].x, plats[i].y, plats[i].longueur, plats[i].largeur)
-    }
+
     
     //console.log(plats[0][0])
     

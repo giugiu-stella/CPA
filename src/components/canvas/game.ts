@@ -1,4 +1,4 @@
-export {type Player, type Coord, moveUp, moveDown, moveLeft, moveRight };
+export {type Camera, type Player, type Coord, moveUp, moveDown, moveLeft, moveRight };
 type Coord = { x: number; y: number}
 type Player ={
     pos:Coord,
@@ -7,6 +7,14 @@ type Player ={
     velX: number,
     velY: number,
 }
+type Camera = {
+    x : number,
+    y : number,
+  
+    widthC: number,
+    heightC: number,
+  
+  }
 export class Plateforme{
     x: number = 0
     y: number =0

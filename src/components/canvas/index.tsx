@@ -19,7 +19,7 @@ const initCanvas =
 
 
 //Initialisation des plateformes (global car on les connait toutes à l'avance)
-let ensPlat = [new jeu.Plateforme({x : 400, y:400, longueur:200, largeur:70}), new jeu.Plateforme({x : 800, y:470, longueur:200, largeur:70}), new jeu.Plateforme({x : 1200, y:615, longueur:70, largeur:70})]
+export let ensPlat = [new jeu.Plateforme({x : 400, y:400, longueur:200, largeur:70}), new jeu.Plateforme({x : 800, y:470, longueur:200, largeur:70}), new jeu.Plateforme({x : 1200, y:615, longueur:70, largeur:70})]
 
 //new jeu.Plateforme({x : 300, y:400, longueur:200, largeur:70}),
 //new jeu.Plateforme({x : 200, y:300, longueur:200, largeur:70}),new jeu.Plateforme({x : 100, y:200, longueur:200, largeur:70}[400, 520, 200, 70],[300, 400, 200, 70],[200, 300, 200, 70],[100, 200, 200, 70]]
@@ -60,6 +60,14 @@ const Canvas = ({ height, width }: { height: number; width: number }) => {
     size: { height, width },
     endOfGame: true,
     platforms: ensPlat,
+    camera: {
+      x : 0,
+      y : 0,
+    
+      widthC: width,
+      heightC: height,
+    
+    }
   }
 
   const ref = useRef<any>()
