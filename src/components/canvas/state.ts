@@ -170,11 +170,30 @@ export const collide_platEnnemis = (state: State) => {
 
 const update_balles = (state: State) => {
   for(let i=0; i<state.balle.length; i++){
-    state.balle[i].x+=state.balle[i].speed
-    state.balle[i].dist_parcouru+=state.balle[i].speed
-    //on retire la balle de la liste quand la distance est parcourue ou s'il y a collision
-    if(state.balle[i].dist_parcouru>state.balle[i].dist_max){
-      state.balle.splice(i,1)
+    if(rotate){
+      state.balle[i].x+=state.balle[i].speed
+      state.balle[i].dist_parcouru+=state.balle[i].speed
+      //on retire la balle de la liste quand la distance est parcourue ou s'il y a collision
+      if(state.balle[i].dist_parcouru>state.balle[i].dist_max){
+        state.balle.splice(i,1)
+      }
+    }
+    else{
+      state.balle[i].x-=state.balle[i].speed
+      state.balle[i].dist_parcouru-=state.balle[i].speed
+  
+      for(let j=0; j<state.ennemis.length; j++){
+        console.log(state.ennemis[j].HP)
+        if(state.balle[i].x==state.ennemis[j].x && state.balle[i].y==state.ennemis[j].y){
+          state.ennemis[j].HP--
+          state.balle.splice(i,1)
+          console.log(state.ennemis[j].HP)
+        }
+      }
+      //on retire la balle de la liste quand la distance est parcourue ou s'il y a collision
+      if(state.balle[i].dist_parcouru<state.balle[i].dist_max){
+        state.balle.splice(i,1)
+      }
     }
   }
   if (reload !=0){
@@ -208,7 +227,13 @@ export const step = (state: State) => {
       var name = event.key;
       if(name===' ' && reload == 0){
         reload = 1;
-        state.balle.push(new jeu.Balle({x : state.joueur.pos.x+dimPersoX, y:state.joueur.pos.y, speed:10, dist_parcouru:0,dist_max:400}))
+        if(rotate){
+          state.balle.push(new jeu.Balle({x : state.joueur.pos.x+dimPersoX, y:state.joueur.pos.y, speed:10, dist_parcouru:0,dist_max:400}))
+        }
+        else{
+          state.balle.push(new jeu.Balle({x : state.joueur.pos.x-dimPersoX, y:state.joueur.pos.y, speed:10, dist_parcouru:0,dist_max:-400}))
+        }
+      
       }
   
       if(name==='z'){
@@ -298,6 +323,8 @@ export const step = (state: State) => {
 
   //deplacement Ennemis
   for(let j=0; j<state.ennemis.length;j++){
+    console.log(state.ennemis[j].HP)
+    
     //on verifie si l'ennemi doit changer de direction car il a parcouru sa distance
     if(Math.abs(state.ennemis[j].dist_parcouru)>state.ennemis[j].dist_max){
       state.ennemis[j].speed = -state.ennemis[j].speed;
@@ -349,9 +376,6 @@ export const step = (state: State) => {
     state.camera.x = state.joueur.pos.x
     state.camera.y = state.joueur.pos.y
   }
-  
-
-
   
 
   return {

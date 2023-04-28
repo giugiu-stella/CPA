@@ -325,6 +325,11 @@ const diplayImages = (ctx: CanvasRenderingContext2D) => (state: State) => {
     }*/
   
   for(let i=0; i<state.balle.length; i++){
+    /*for(let j=0; j<state.ennemis.length; j++){
+      if(state.balle[i].x!=state.ennemis[j].x && state.balle[i].y!=state.ennemis[j].y){
+        ctx.drawImage(imageBalleUrl,state.balle[i].x,state.balle[i].y,25,25)
+      }
+    }*/
     ctx.drawImage(imageBalleUrl,state.balle[i].x,state.balle[i].y,25,25)
   }
 
