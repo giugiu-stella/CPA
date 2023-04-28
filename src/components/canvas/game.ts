@@ -31,6 +31,8 @@ export class  Ennemi{
     speed:number=0
     velX: number=0
     velY: number=0
+    dist_parcouru: number = 0
+    dist_max: number = 0
     public constructor(init?:Partial<Ennemi>) {
         Object.assign(this, init);
     }

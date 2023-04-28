@@ -208,11 +208,69 @@ const diplayImages = (ctx: CanvasRenderingContext2D) => (state: State) => {
       //ctx.fillStyle = 'red'
       //ctx.fillRect(plats[i].x, plats[i].y, plats[i].longueur, plats[i].largeur)
   }
+
+
+
+  if(stateEnnemi){
+    if(walkcycleEnnemis==false){
+      cptTmpEnnemis = 0
+      if(rotateEnnemis == true){
+        for(let i = 0; i<ensEnnemis.length; i++){
+          ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+        }
+      }
+      else{
+        for(let i = 0; i<ensEnnemis.length; i++){
+          ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+        }
+      }
+    }
+    else{
+      if(rotateEnnemis==true){
+        cptTmpEnnemis= (cptTmpEnnemis+1)%60
+        if(cptTmpEnnemis<15)
+          for(let i = 0; i<ensEnnemis.length; i++){
+            ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+          }
+        else if (cptTmpEnnemis>=15 && cptTmpEnnemis < 30)
+          for(let i = 0; i<ensEnnemis.length; i++){
+            ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+          }
+        else if (cptTmp>=30 && cptTmp < 45)
+          for(let i = 0; i<ensEnnemis.length; i++){
+            ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+          }
+        else{
+          for(let i = 0; i<ensEnnemis.length; i++){
+            ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+          }
+        }
+      }
+      else{
+        cptTmpEnnemis= (cptTmpEnnemis+1)%60
+        if(cptTmpEnnemis<15)
+          for(let i = 0; i<ensEnnemis.length; i++){
+            ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+          }
+        else if (cptTmpEnnemis>=15 && cptTmpEnnemis < 30)
+          for(let i = 0; i<ensEnnemis.length; i++){
+            ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+          }
+        else if (cptTmp>=30 && cptTmp < 45)
+          for(let i = 0; i<ensEnnemis.length; i++){
+            ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+          }
+        else{
+          for(let i = 0; i<ensEnnemis.length; i++){
+            ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+          }
+        }
+      }
+    }
+  }
+
   if(stateImagePerso){
 
-    
-
-    console.log("frame: " + cptTmp)
     if(walkcycle==false){
       cptTmp = 0
       if(rotate == true){
@@ -250,63 +308,7 @@ const diplayImages = (ctx: CanvasRenderingContext2D) => (state: State) => {
     }
   }
 
-if(stateEnnemi){
-  if(walkcycleEnnemis==false){
-    cptTmpEnnemis = 0
-    if(rotateEnnemis == true){
-      for(let i = 0; i<ensEnnemis.length; i++){
-        ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
-    }
-    }
-    else{
-      for(let i = 0; i<ensEnnemis.length; i++){
-        ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
-      }
-      }
-  }
-  else{
-    if(rotateEnnemis==true){
-      cptTmpEnnemis= (cptTmpEnnemis+1)%60
-      if(cptTmpEnnemis<15)
-        for(let i = 0; i<ensEnnemis.length; i++){
-          ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
-        }
-      else if (cptTmpEnnemis>=15 && cptTmpEnnemis < 30)
-        for(let i = 0; i<ensEnnemis.length; i++){
-          ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
-        }
-      else if (cptTmp>=30 && cptTmp < 45)
-        for(let i = 0; i<ensEnnemis.length; i++){
-          ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
-        }
-      else{
-        for(let i = 0; i<ensEnnemis.length; i++){
-          ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
-        }
-      }
-    }
-    else{
-      cptTmpEnnemis= (cptTmpEnnemis+1)%60
-      if(cptTmpEnnemis<15)
-        for(let i = 0; i<ensEnnemis.length; i++){
-          ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
-        }
-      else if (cptTmpEnnemis>=15 && cptTmpEnnemis < 30)
-        for(let i = 0; i<ensEnnemis.length; i++){
-          ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
-        }
-      else if (cptTmp>=30 && cptTmp < 45)
-        for(let i = 0; i<ensEnnemis.length; i++){
-          ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
-        }
-      else{
-        for(let i = 0; i<ensEnnemis.length; i++){
-          ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
-        }
-      }
-    }
-  }
-}
+
   
   ctx.restore();
 }

@@ -20,7 +20,7 @@ const initCanvas =
 
 //Initialisation des plateformes (global car on les connait toutes à l'avance)
 export let ensPlat = [new jeu.Plateforme({x : 400, y:400, longueur:200, largeur:70}), new jeu.Plateforme({x : 800, y:470, longueur:200, largeur:70}), new jeu.Plateforme({x : 1200, y:615, longueur:70, largeur:70}),new jeu.Plateforme({x : 1800, y:615, longueur:70, largeur:70})]
-export let ensEnnemis = [new jeu.Ennemi({x: 1400,y: 610, HP:0, speed:10,velX:0,velY:0})]
+export let ensEnnemis = [new jeu.Ennemi({x: 500,y: 610, HP:0, speed:4,velX:0,velY:0,dist_parcouru:0,dist_max:300})]
 //new jeu.Plateforme({x : 300, y:400, longueur:200, largeur:70}),
 //new jeu.Plateforme({x : 200, y:300, longueur:200, largeur:70}),new jeu.Plateforme({x : 100, y:200, longueur:200, largeur:70}[400, 520, 200, 70],[300, 400, 200, 70],[200, 300, 200, 70],[100, 200, 200, 70]]
 
