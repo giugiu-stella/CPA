@@ -23,7 +23,17 @@ import marche2d from './images/megaMan_run2_droite.png'
 import marche3d from './images/megaMan_run3_droite.png'
 import marche4d from './images/megaMan_run4_droite.png'
 import ennemi1 from './images/enemy_boule/enemy_boule_3.png'
+import ennemi2 from './images/enemy_boule/enemy_boule_4.png'
+import ennemi3 from './images/enemy_boule/enemy_boule_5.png'
+import ennemi1D from './images/enemy_boule/enemy_boule_3_droite.png'
+import ennemi2D from './images/enemy_boule/enemy_boule_4_droite.png'
+import ennemi3D from './images/enemy_boule/enemy_boule_5_droite.png'
+
+import balleImg from './images/oeuf.png'
+
+
 import pf from './images/plateforme_city.png'
+import imageMur from './images/mur.png'
 
 import { ensEnnemis, ensPlat } from './index'
 
@@ -37,8 +47,8 @@ let oldrotate = false
 
 let frame = 0
 
-export var dimPersoX = 120
-export var dimPersoY = 120
+export var dimPersoX = 100
+export var dimPersoY = 100
 
 let stateImageSol = false
 let stateImageCoeur = false
@@ -63,7 +73,17 @@ const imageMarche2DUrl = new Image();
 const imageMarche3DUrl = new Image();
 const imageMarche4DUrl = new Image();
 const imageEnnemi1Url = new Image();
+const imageEnnemi2Url = new Image();
+const imageEnnemi3Url = new Image();
+const imageEnnemi1DUrl = new Image();
+const imageEnnemi2DUrl = new Image();
+const imageEnnemi3DUrl = new Image();
+
+const imageBalleUrl = new Image();
+
+
 const imagePF = new Image();
+const imageMurUrl = new Image();
 
 imagePF.src = pf;
 imageCoeurUrl.src = imageCoeur;
@@ -83,6 +103,15 @@ imageMarche2DUrl.src = marche2d;
 imageMarche3DUrl.src = marche3d;
 imageMarche4DUrl.src = marche4d;
 imageEnnemi1Url.src = ennemi1;
+imageEnnemi2Url.src = ennemi2;
+imageEnnemi3Url.src = ennemi3;
+imageEnnemi1DUrl.src = ennemi1D;
+imageEnnemi2DUrl.src = ennemi2D;
+imageEnnemi3DUrl.src = ennemi3D;
+
+imageBalleUrl.src = balleImg;
+
+imageMurUrl.src = imageMur;
 
 imageSolUrl.onload = () => {
   stateImageSol = true
@@ -186,21 +215,14 @@ const diplayImages = (ctx: CanvasRenderingContext2D) => (state: State) => {
       ctx.drawImage(imageFond4Url,state.camera.x-ctx.canvas.width/2,-200,1400,1000)
     }
   }
-  /*if(stateImageSol){
-    ctx.drawImage(imageSolUrl,0,680,500,100);
-    ctx.drawImage(imageSolUrl,495,680,500,100);
-    ctx.drawImage(imageSolUrl,990,680,500,100);
-  }*/
+  
 
-  //affichage des plateformes
+  //affichage du sol
   for(let i = 0; i<20; i++){
       ctx.drawImage(imageSolUrl,i*495, 680, 500, 100)
   }
 
-  if(stateImageCoeur)
-    ctx.drawImage(imageCoeurUrl,10+state.camera.x-ctx.canvas.width/2,10,50,50);
-    ctx.drawImage(imageCoeurUrl,70+state.camera.x-ctx.canvas.width/2,10,50,50);
-    ctx.drawImage(imageCoeurUrl,130+state.camera.x-ctx.canvas.width/2,10,50,50);
+
 
 
   for(let i = 0; i<ensPlat.length; i++){
@@ -209,22 +231,56 @@ const diplayImages = (ctx: CanvasRenderingContext2D) => (state: State) => {
       //ctx.fillRect(plats[i].x, plats[i].y, plats[i].longueur, plats[i].largeur)
   }
 
+  ctx.drawImage(imageMurUrl,0, -20, 100, 800)
 
+  for(let i=0; i<state.joueur.HP; i++){
+    ctx.drawImage(imageCoeurUrl,(state.camera.x-ctx.canvas.width/2)+i*60,10,50,50);
+  }
+  /*
+  if(stateImageCoeur){
+    ctx.drawImage(imageCoeurUrl,10+state.camera.x-ctx.canvas.width/2,10,50,50);
+    ctx.drawImage(imageCoeurUrl,70+state.camera.x-ctx.canvas.width/2,10,50,50);
+    ctx.drawImage(imageCoeurUrl,130+state.camera.x-ctx.canvas.width/2,10,50,50);
+  }*/
 
   if(stateEnnemi){
-    if(walkcycleEnnemis==false){
-      cptTmpEnnemis = 0
-      if(rotateEnnemis == true){
-        for(let i = 0; i<ensEnnemis.length; i++){
-          ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+    if(walkcycleEnnemis==true){
+      cptTmpEnnemis= (cptTmpEnnemis+1)%60
+      console.log(cptTmpEnnemis)
+      for(let i = 0; i<ensEnnemis.length; i++){
+        if(ensEnnemis[i].rotate == true){
+          if(cptTmpEnnemis<15){
+            ctx.drawImage(imageEnnemi1DUrl,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+          }
+          else if(cptTmpEnnemis>=15 && cptTmpEnnemis < 30){
+            ctx.drawImage(imageEnnemi2DUrl,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+          }
+          else if(cptTmpEnnemis>=30 && cptTmpEnnemis < 45){
+            ctx.drawImage(imageEnnemi1DUrl,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+          }
+          else{
+            ctx.drawImage(imageEnnemi3DUrl,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+          }
         }
-      }
-      else{
-        for(let i = 0; i<ensEnnemis.length; i++){
-          ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+        else{
+          if(cptTmpEnnemis<15){
+            ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+          }
+          else if(cptTmpEnnemis>=15 && cptTmpEnnemis < 30){
+            ctx.drawImage(imageEnnemi2Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+          }
+          else if(cptTmpEnnemis>=30 && cptTmpEnnemis < 45){
+            ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+          }
+          else{
+            ctx.drawImage(imageEnnemi3Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+          }
         }
-      }
+      }  
     }
+      
+  }
+    /*
     else{
       if(rotateEnnemis==true){
         cptTmpEnnemis= (cptTmpEnnemis+1)%60
@@ -266,7 +322,10 @@ const diplayImages = (ctx: CanvasRenderingContext2D) => (state: State) => {
           }
         }
       }
-    }
+    }*/
+  
+  for(let i=0; i<state.balle.length; i++){
+    ctx.drawImage(imageBalleUrl,state.balle[i].x,state.balle[i].y,25,25)
   }
 
   if(stateImagePerso){

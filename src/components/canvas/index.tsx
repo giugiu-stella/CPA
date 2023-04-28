@@ -1,7 +1,7 @@
 import React from 'react'
 import * as conf from './conf'
 import { useRef, useEffect } from 'react'
-import { State, step, stepAuto,mouseMove, endOfGame } from './state'
+import { State, step, stepAuto,mouseMove,endOfGame} from './state'
 import { render/*, RenderProps*/ } from './renderer'
 
 import * as jeu from './game'
@@ -19,8 +19,9 @@ const initCanvas =
 
 
 //Initialisation des plateformes (global car on les connait toutes à l'avance)
-export let ensPlat = [new jeu.Plateforme({x : 400, y:400, longueur:200, largeur:70}), new jeu.Plateforme({x : 800, y:470, longueur:200, largeur:70}), new jeu.Plateforme({x : 1200, y:615, longueur:70, largeur:70}),new jeu.Plateforme({x : 1800, y:615, longueur:70, largeur:70})]
-export let ensEnnemis = [new jeu.Ennemi({x: 500,y: 610, HP:0, speed:4,velX:0,velY:0,dist_parcouru:0,dist_max:300})]
+export let ensPlat = [new jeu.Plateforme({x : 0, y:0, longueur:100, largeur:810}),new jeu.Plateforme({x : 400, y:400, longueur:200, largeur:70}), new jeu.Plateforme({x : 800, y:470, longueur:200, largeur:70}), new jeu.Plateforme({x : 1200, y:615, longueur:70, largeur:70}),new jeu.Plateforme({x : 1800, y:615, longueur:70, largeur:70})]
+export let ensEnnemis = [new jeu.Ennemi({x: 500,y: 610, HP:0, speed:4,velX:0,velY:0,dist_parcouru:0,dist_max:300,rotate:true})]
+export let ensBalle = []
 //new jeu.Plateforme({x : 300, y:400, longueur:200, largeur:70}),
 //new jeu.Plateforme({x : 200, y:300, longueur:200, largeur:70}),new jeu.Plateforme({x : 100, y:200, longueur:200, largeur:70}[400, 520, 200, 70],[300, 400, 200, 70],[200, 300, 200, 70],[100, 200, 200, 70]]
 
@@ -30,8 +31,8 @@ const Canvas = ({ height, width }: { height: number; width: number }) => {
   const initialState: State = {
     joueur: {
       pos: {
-        x: 50,
-        y: 50,
+        x: 200,
+        y: 600,
       },
       HP: 3,
       speed: 10,
@@ -39,35 +40,18 @@ const Canvas = ({ height, width }: { height: number; width: number }) => {
       velY: 0,
     },
 
-    pos: new Array(20).fill(1).map((_) => ({
-      life: conf.BALLLIFE,
-      coord: {
-        x: randomInt(width - 120) + 60,
-        y: randomInt(height - 120) + 60,
-        dx: 4 * randomSign(),
-        dy: 4 * randomSign(),
-      },
-    })),
-    player: {
-      life: conf.PLAYERLIFE,
-      coord: {
-        x: randomInt(width - 120) + 60,
-        y: randomInt(height - 120) + 60,
-        dx: 0,
-        dy: 0,
-      },
-    },
-    size: { height, width },
+
     endOfGame: true,
     platforms: ensPlat,
     camera: {
-      x: 0,
+      x: 700,
       y: 0,
 
       widthC: width,
       heightC: height,
     },
     ennemis: ensEnnemis,
+    balle: ensBalle,
   }
 
   const ref = useRef<any>()
