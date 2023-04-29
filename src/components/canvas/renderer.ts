@@ -31,6 +31,15 @@ import ennemi3D from './images/enemy_boule/enemy_boule_5_droite.png'
 
 import balleImg from './images/oeuf.png'
 
+import mort1 from './images/mort/mort_1.png'
+import mort2 from './images/mort/mort_2.png'
+import mort3 from './images/mort/mort_3.png'
+import mort4 from './images/mort/mort_4.png'
+import mort5 from './images/mort/mort_5.png'
+import mort6 from './images/mort/mort_6.png'
+import mort7 from './images/mort/mort_7.png'
+import mort8 from './images/mort/mort_8.png'
+
 
 import pf from './images/plateforme_city.png'
 import imageMur from './images/mur.png'
@@ -81,6 +90,15 @@ const imageEnnemi3DUrl = new Image();
 
 const imageBalleUrl = new Image();
 
+const mort1URL = new Image();
+const mort2URL = new Image();
+const mort3URL = new Image();
+const mort4URL = new Image();
+const mort5URL = new Image();
+const mort6URL = new Image();
+const mort7URL = new Image();
+const mort8URL = new Image();
+
 
 const imagePF = new Image();
 const imageMurUrl = new Image();
@@ -110,6 +128,16 @@ imageEnnemi2DUrl.src = ennemi2D;
 imageEnnemi3DUrl.src = ennemi3D;
 
 imageBalleUrl.src = balleImg;
+
+mort1URL.src = mort1;
+mort2URL.src = mort2;
+mort3URL.src = mort3;
+mort4URL.src = mort4;
+mort5URL.src = mort5;
+mort6URL.src = mort6;
+mort7URL.src = mort7;
+mort8URL.src = mort8;
+
 
 imageMurUrl.src = imageMur;
 
@@ -192,10 +220,44 @@ const drawCirle = (
   ctx.fill()
 }*/
 
+//booleen pour verifier si l'on peut animer la mort d'un ennemi ou non
+let canAnim = false
+
+//compteur pour l'animation de mort
+let cptMort = 0
+
+const animMort = (ctx: CanvasRenderingContext2D, state: State, x:number,y:number) => {
+  cptMort = (cptMort+1)%61
+  if(cptMort<7)
+    ctx.drawImage(mort1URL,x, y,80,80)
+  else if(cptMort>=7 && cptMort<15)
+    ctx.drawImage(mort2URL,x, y,80,80)
+  else if(cptMort>=15 && cptMort<22)
+    ctx.drawImage(mort3URL,x, y,80,80)
+  else if(cptMort>=22 && cptMort<30)
+    ctx.drawImage(mort4URL,x, y,80,80)
+  else if(cptMort>=30 && cptMort<37)
+    ctx.drawImage(mort5URL,x, y,80,80)
+  else if(cptMort>=37 && cptMort<45)
+    ctx.drawImage(mort6URL,x, y,80,80)
+  else if(cptMort>=45 && cptMort<52)
+    ctx.drawImage(mort7URL,x, y,80,80)
+  else if(cptMort>=52 && cptMort<60)
+    ctx.drawImage(mort8URL,x, y,80,80)
+  else{
+    canAnim = false
+    cptMort = (cptMort+1)%61
+  }
+
+}
+
+let xMort=0
+let yMort=0
+
 
 let cptTmp = 0
 let cptTmpEnnemis=0
-const diplayImages = (ctx: CanvasRenderingContext2D) => (state: State) => {
+const displayImages = (ctx: CanvasRenderingContext2D) => (state: State) => {
   
   //on déplace la caméra en prenant le joueur comme réferentiel
   ctx.save();
@@ -280,6 +342,21 @@ const diplayImages = (ctx: CanvasRenderingContext2D) => (state: State) => {
     }
       
   }
+
+//animation mort ennemis
+for(let i=0; i<state.ennemis.length; i++){
+  if(state.ennemis[i].HP <=0){
+    xMort = state.ennemis[i].x
+    yMort = state.ennemis[i].y
+    state.ennemis.splice(i,1)
+    canAnim = true
+  } 
+}
+if(canAnim){
+  animMort(ctx,state,xMort,yMort)
+}
+
+
     /*
     else{
       if(rotateEnnemis==true){
@@ -386,7 +463,7 @@ export const render =
     frame ++
     frame = frame%20
 
-    diplayImages(ctx)(state)
+    displayImages(ctx)(state)
     /*state.pos.map((c) =>
       drawCirle(
         ctx,

@@ -33,7 +33,8 @@ export class Ennemi{
     velY: number=0
     dist_parcouru: number = 0
     dist_max: number = 0
-    rotate: boolean = false
+    rotate: boolean = true
+    type: string = 'boule'
     public constructor(init?:Partial<Ennemi>) {
         Object.assign(this, init);
     }
@@ -44,7 +45,8 @@ export class Balle{
     speed:number=0
     dist_parcouru: number = 0
     dist_max: number = 0
-    public constructor(init?:Partial<Ennemi>) {
+    rotation: number = 0
+    public constructor(init?:Partial<Balle>) {
         Object.assign(this, init);
     }
 }

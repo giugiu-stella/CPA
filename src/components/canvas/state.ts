@@ -145,12 +145,22 @@ export const collide_platEnnemis = (state: State) => {
         && state.ennemis[j].y - 80/2 <=(state.platforms[i].y + state.platforms[i].largeur)&& state.ennemis[j].x+80/2 <(state.platforms[i].x +10)){
           state.ennemis[j].x =state.platforms[i].x-80/2;
           state.ennemis[j].speed = -state.ennemis[j].speed;
+          //rotation si collision
+          if(state.ennemis[j].rotate == true)
+            state.ennemis[j].rotate = false;
+          else
+            state.ennemis[j].rotate = true
       }
       /*droite*/
       if (state.ennemis[j].x-80/2 < (state.platforms[i].x +state.platforms[i].longueur )&& state.ennemis[j].y+80/2 >=state.platforms[i].y 
         && state.ennemis[j].y - 80/2 <=(state.platforms[i].y + state.platforms[i].largeur) && state.ennemis[j].x-80/2 > (state.platforms[i].x +state.platforms[i].longueur -10) ){
           state.ennemis[j].x =state.platforms[i].x +state.platforms[i].longueur+80/2;
           state.ennemis[j].speed = -state.ennemis[j].speed;
+          //rotation si collision
+          if(state.ennemis[j].rotate == true)
+            state.ennemis[j].rotate = false;
+          else
+            state.ennemis[j].rotate = true
       }
       /*bas*/
       if (state.ennemis[j].y-80/2 < (state.platforms[i].y+state.platforms[i].largeur) && state.ennemis[j].x+80/2 >state.platforms[i].x 
@@ -168,32 +178,30 @@ export const collide_platEnnemis = (state: State) => {
   }
 }
 
+//Verification de collision entre les balles et les ennemis ou plateformes
+const collide_balle = (state: State, i: number) =>{
+  for(let j=0; j<state.ennemis.length; j++){
+    if(state.balle[i].x+25/2>state.ennemis[j].x && state.balle[i].x+25/2<state.ennemis[j].x+80 && state.balle[i].y+25/2>state.ennemis[j].y && state.balle[i].y+25/2<state.ennemis[j].y+80){
+      state.ennemis[j].HP--
+      return true
+    }
+  }
+  for(let j=0; j<state.platforms.length; j++){
+    if(state.balle[i].x+25/2>state.platforms[j].x && state.balle[i].x+25/2<state.platforms[j].x+state.platforms[j].longueur && state.balle[i].y+25/2>state.platforms[j].y && state.balle[i].y+25/2<state.platforms[j].y+state.platforms[j].largeur){
+      return true
+    }
+  }
+  return false
+  
+}
+
 const update_balles = (state: State) => {
   for(let i=0; i<state.balle.length; i++){
-    if(rotate){
-      state.balle[i].x+=state.balle[i].speed
-      state.balle[i].dist_parcouru+=state.balle[i].speed
-      //on retire la balle de la liste quand la distance est parcourue ou s'il y a collision
-      if(state.balle[i].dist_parcouru>state.balle[i].dist_max){
-        state.balle.splice(i,1)
-      }
-    }
-    else{
-      state.balle[i].x-=state.balle[i].speed
-      state.balle[i].dist_parcouru-=state.balle[i].speed
-  
-      for(let j=0; j<state.ennemis.length; j++){
-        console.log(state.ennemis[j].HP)
-        if(state.balle[i].x==state.ennemis[j].x && state.balle[i].y==state.ennemis[j].y){
-          state.ennemis[j].HP--
-          state.balle.splice(i,1)
-          console.log(state.ennemis[j].HP)
-        }
-      }
-      //on retire la balle de la liste quand la distance est parcourue ou s'il y a collision
-      if(state.balle[i].dist_parcouru<state.balle[i].dist_max){
-        state.balle.splice(i,1)
-      }
+    state.balle[i].x+=state.balle[i].speed*state.balle[i].rotation
+    state.balle[i].dist_parcouru+=state.balle[i].speed*state.balle[i].rotation
+    //on retire la balle de la liste quand la distance est parcourue ou s'il y a collision
+    if((Math.abs(state.balle[i].dist_parcouru)>state.balle[i].dist_max) || collide_balle(state,i)){
+      state.balle.splice(i,1)
     }
   }
   if (reload !=0){
@@ -201,6 +209,7 @@ const update_balles = (state: State) => {
   }
 
 }
+
 
 
 export const step = (state: State) => {
@@ -228,10 +237,10 @@ export const step = (state: State) => {
       if(name===' ' && reload == 0){
         reload = 1;
         if(rotate){
-          state.balle.push(new jeu.Balle({x : state.joueur.pos.x+dimPersoX, y:state.joueur.pos.y, speed:10, dist_parcouru:0,dist_max:400}))
+          state.balle.push(new jeu.Balle({x : state.joueur.pos.x+dimPersoX-50, y:state.joueur.pos.y, speed:14, dist_parcouru:0,dist_max:500,rotation:1}))
         }
         else{
-          state.balle.push(new jeu.Balle({x : state.joueur.pos.x-dimPersoX, y:state.joueur.pos.y, speed:10, dist_parcouru:0,dist_max:-400}))
+          state.balle.push(new jeu.Balle({x : state.joueur.pos.x-dimPersoX+40, y:state.joueur.pos.y, speed:14, dist_parcouru:0,dist_max:500,rotation:-1}))
         }
       
       }
