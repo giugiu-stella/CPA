@@ -1,4 +1,5 @@
-export {type Camera, type Player, type Coord, moveUp, moveDown, moveLeft, moveRight };
+//definitions de nos types et classes
+export {type Camera, type Player, type Coord, moveLeft, moveRight };
 type Coord = { x: number; y: number}
 type Player ={
     pos:Coord,
@@ -51,12 +52,7 @@ export class Balle{
     }
 }
 
-const moveUp=(player:Player,delta:number)=>{
-    return {x:player.pos.x, y:player.pos.y-(player.speed * delta)}
-}
-const moveDown=(player:Player,delta:number)=>{
-    return {x:player.pos.x, y:player.pos.y+(player.speed * delta)}
-}
+
 const moveLeft=(player:Player,delta:number)=>{
     return {x:player.pos.x-(player.speed * delta),y: player.pos.y}
 }

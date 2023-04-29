@@ -1,4 +1,3 @@
-import * as conf from './conf'
 import { State } from './state'
 import * as jeu from './game'
 
@@ -29,6 +28,10 @@ import ennemi1D from './images/enemy_boule/enemy_boule_3_droite.png'
 import ennemi2D from './images/enemy_boule/enemy_boule_4_droite.png'
 import ennemi3D from './images/enemy_boule/enemy_boule_5_droite.png'
 
+import ennemiv1 from './images/ennemy_volant/ennemy_volant_1.png'
+import ennemiv2 from './images/ennemy_volant/ennemy_volant_2.png'
+import ennemiv3 from './images/ennemy_volant/ennemy_volant_3.png'
+
 import balleImg from './images/oeuf.png'
 
 import mort1 from './images/mort/mort_1.png'
@@ -52,7 +55,6 @@ const COLORS = {
   BLUE: '#0000ff',
 }
 
-let oldrotate = false
 
 let frame = 0
 
@@ -65,6 +67,8 @@ let stateImagePerso = false
 let stateFond = false
 let stateEnnemi=false
 
+
+//----------recuperer les images--------------
 const imageCoeurUrl = new Image();
 const imageSolUrl = new Image();
 const imagePersoUrl = new Image();
@@ -87,6 +91,10 @@ const imageEnnemi3Url = new Image();
 const imageEnnemi1DUrl = new Image();
 const imageEnnemi2DUrl = new Image();
 const imageEnnemi3DUrl = new Image();
+
+const ennemiV1Url = new Image();
+const ennemiV2Url = new Image();
+const ennemiV3Url = new Image();
 
 const imageBalleUrl = new Image();
 
@@ -127,6 +135,10 @@ imageEnnemi1DUrl.src = ennemi1D;
 imageEnnemi2DUrl.src = ennemi2D;
 imageEnnemi3DUrl.src = ennemi3D;
 
+ennemiV1Url.src = ennemiv1;
+ennemiV2Url.src = ennemiv2;
+ennemiV3Url.src = ennemiv3;
+
 imageBalleUrl.src = balleImg;
 
 mort1URL.src = mort1;
@@ -137,7 +149,6 @@ mort5URL.src = mort5;
 mort6URL.src = mort6;
 mort7URL.src = mort7;
 mort8URL.src = mort8;
-
 
 imageMurUrl.src = imageMur;
 
@@ -160,34 +171,8 @@ imageEnnemi1Url.onload = () =>{
   stateEnnemi = true
 }
 
-const toDoubleHexa = (n: number) =>
-  n < 16 ? '0' + n.toString(16) : n.toString(16)
+//---------------------------------------
 
-export const rgbaTorgb = (rgb: string, alpha = 0) => {
-  let r = 0
-  let g = 0
-  let b = 0
-  if (rgb.startsWith('#')) {
-    const hexR = rgb.length === 7 ? rgb.slice(1, 3) : rgb[1]
-    const hexG = rgb.length === 7 ? rgb.slice(3, 5) : rgb[2]
-    const hexB = rgb.length === 7 ? rgb.slice(5, 7) : rgb[3]
-    r = parseInt(hexR, 16)
-    g = parseInt(hexG, 16)
-    b = parseInt(hexB, 16)
-  }
-  if (rgb.startsWith('rgb')) {
-    const val = rgb.replace(/(rgb)|\(|\)| /g, '')
-    const splitted = val.split(',')
-    r = parseInt(splitted[0])
-    g = parseInt(splitted[1])
-    b = parseInt(splitted[2])
-  }
-
-  r = Math.max(Math.min(Math.floor((1 - alpha) * r + alpha * 255), 255), 0)
-  g = Math.max(Math.min(Math.floor((1 - alpha) * g + alpha * 255), 255), 0)
-  b = Math.max(Math.min(Math.floor((1 - alpha) * b + alpha * 255), 255), 0)
-  return `#${toDoubleHexa(r)}${toDoubleHexa(g)}${toDoubleHexa(b)}`
-}
 
 const clear = (ctx: CanvasRenderingContext2D) => {
   const { height, width } = ctx.canvas
@@ -196,29 +181,8 @@ const clear = (ctx: CanvasRenderingContext2D) => {
 }
 
 
-/*
-export type RenderProps = {
-  pos: { x: number; y: number }
-  scale: number
-}
 
-const drawCirle = (
-  ctx: CanvasRenderingContext2D,
-  renderProps: RenderProps,
-  { x, y }: { x: number; y: number },
-  color: string
-) => {
-  ctx.beginPath()
-  ctx.fillStyle = color
-  ctx.arc(
-    (x + renderProps.pos.x) * renderProps.scale,
-    (y + renderProps.pos.y) * renderProps.scale,
-    conf.RADIUS * renderProps.scale,
-    0,
-    2 * Math.PI
-  )
-  ctx.fill()
-}*/
+let listMurs = [[0, -20, 100, 800],[2400, 385, 100, 300],[2400, 385, 100, 300],[3400, 385, 100, 300],[6000, -20, 100, 800]]
 
 //booleen pour verifier si l'on peut animer la mort d'un ennemi ou non
 let canAnim = false
@@ -226,6 +190,7 @@ let canAnim = false
 //compteur pour l'animation de mort
 let cptMort = 0
 
+//fonction d'animation de mort des ennemis
 const animMort = (ctx: CanvasRenderingContext2D, state: State, x:number,y:number) => {
   cptMort = (cptMort+1)%61
   if(cptMort<7)
@@ -251,12 +216,14 @@ const animMort = (ctx: CanvasRenderingContext2D, state: State, x:number,y:number
 
 }
 
+//coordonnées du dernier ennemi mort pour l'animation de mort
 let xMort=0
 let yMort=0
 
-
-let cptTmp = 0
+//compteurs de frames pour les animation du personnage et des ennemis
+let cptTmpPerso = 0
 let cptTmpEnnemis=0
+
 const displayImages = (ctx: CanvasRenderingContext2D) => (state: State) => {
   
   //on déplace la caméra en prenant le joueur comme réferentiel
@@ -284,58 +251,76 @@ const displayImages = (ctx: CanvasRenderingContext2D) => (state: State) => {
       ctx.drawImage(imageSolUrl,i*495, 680, 500, 100)
   }
 
-
-
-
+  //affichage des plateformes
   for(let i = 0; i<ensPlat.length; i++){
       ctx.drawImage(imagePF,ensPlat[i].x, ensPlat[i].y, ensPlat[i].longueur, ensPlat[i].largeur)
-      //ctx.fillStyle = 'red'
-      //ctx.fillRect(plats[i].x, plats[i].y, plats[i].longueur, plats[i].largeur)
   }
 
-  ctx.drawImage(imageMurUrl,0, -20, 100, 800)
+  //affichage des murs
+  for(let m=0; m<listMurs.length; m++){
+    ctx.drawImage(imageMurUrl,listMurs[m][0],listMurs[m][1] ,listMurs[m][2], listMurs[m][3])
+  }
 
+  //affichage des points de vie
   for(let i=0; i<state.joueur.HP; i++){
     ctx.drawImage(imageCoeurUrl,(state.camera.x-ctx.canvas.width/2)+i*60,10,50,50);
   }
-  /*
-  if(stateImageCoeur){
-    ctx.drawImage(imageCoeurUrl,10+state.camera.x-ctx.canvas.width/2,10,50,50);
-    ctx.drawImage(imageCoeurUrl,70+state.camera.x-ctx.canvas.width/2,10,50,50);
-    ctx.drawImage(imageCoeurUrl,130+state.camera.x-ctx.canvas.width/2,10,50,50);
-  }*/
 
+  //animation deplacements ennemis
   if(stateEnnemi){
     if(walkcycleEnnemis==true){
       cptTmpEnnemis= (cptTmpEnnemis+1)%60
-      console.log(cptTmpEnnemis)
       for(let i = 0; i<ensEnnemis.length; i++){
         if(ensEnnemis[i].rotate == true){
           if(cptTmpEnnemis<15){
-            ctx.drawImage(imageEnnemi1DUrl,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+            if(ensEnnemis[i].type == 'boule')
+              ctx.drawImage(imageEnnemi1DUrl,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+            else
+              ctx.drawImage(ennemiV1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
           }
           else if(cptTmpEnnemis>=15 && cptTmpEnnemis < 30){
-            ctx.drawImage(imageEnnemi2DUrl,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+            if(ensEnnemis[i].type == 'boule')
+              ctx.drawImage(imageEnnemi2DUrl,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+            else
+              ctx.drawImage(ennemiV2Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
           }
           else if(cptTmpEnnemis>=30 && cptTmpEnnemis < 45){
-            ctx.drawImage(imageEnnemi1DUrl,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+            if(ensEnnemis[i].type == 'boule')
+              ctx.drawImage(imageEnnemi1DUrl,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+            else
+              ctx.drawImage(ennemiV1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
           }
           else{
-            ctx.drawImage(imageEnnemi3DUrl,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+            if(ensEnnemis[i].type == 'boule')
+              ctx.drawImage(imageEnnemi3DUrl,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+            else
+              ctx.drawImage(ennemiV3Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
           }
         }
         else{
           if(cptTmpEnnemis<15){
-            ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+            if(ensEnnemis[i].type == 'boule')
+              ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+            else
+              ctx.drawImage(ennemiV1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
           }
           else if(cptTmpEnnemis>=15 && cptTmpEnnemis < 30){
-            ctx.drawImage(imageEnnemi2Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+            if(ensEnnemis[i].type == 'boule')
+              ctx.drawImage(imageEnnemi2Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+            else
+              ctx.drawImage(ennemiV2Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
           }
           else if(cptTmpEnnemis>=30 && cptTmpEnnemis < 45){
-            ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+            if(ensEnnemis[i].type == 'boule')
+              ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+            else
+              ctx.drawImage(ennemiV1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
           }
           else{
-            ctx.drawImage(imageEnnemi3Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+            if(ensEnnemis[i].type == 'boule')
+              ctx.drawImage(imageEnnemi3Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
+            else
+              ctx.drawImage(ennemiV3Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
           }
         }
       }  
@@ -357,134 +342,73 @@ if(canAnim){
 }
 
 
-    /*
-    else{
-      if(rotateEnnemis==true){
-        cptTmpEnnemis= (cptTmpEnnemis+1)%60
-        if(cptTmpEnnemis<15)
-          for(let i = 0; i<ensEnnemis.length; i++){
-            ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
-          }
-        else if (cptTmpEnnemis>=15 && cptTmpEnnemis < 30)
-          for(let i = 0; i<ensEnnemis.length; i++){
-            ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
-          }
-        else if (cptTmp>=30 && cptTmp < 45)
-          for(let i = 0; i<ensEnnemis.length; i++){
-            ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
-          }
-        else{
-          for(let i = 0; i<ensEnnemis.length; i++){
-            ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
-          }
-        }
-      }
-      else{
-        cptTmpEnnemis= (cptTmpEnnemis+1)%60
-        if(cptTmpEnnemis<15)
-          for(let i = 0; i<ensEnnemis.length; i++){
-            ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
-          }
-        else if (cptTmpEnnemis>=15 && cptTmpEnnemis < 30)
-          for(let i = 0; i<ensEnnemis.length; i++){
-            ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
-          }
-        else if (cptTmp>=30 && cptTmp < 45)
-          for(let i = 0; i<ensEnnemis.length; i++){
-            ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
-          }
-        else{
-          for(let i = 0; i<ensEnnemis.length; i++){
-            ctx.drawImage(imageEnnemi1Url,ensEnnemis[i].x, ensEnnemis[i].y,80,80)
-          }
-        }
-      }
-    }*/
-  
-  for(let i=0; i<state.balle.length; i++){
-    /*for(let j=0; j<state.ennemis.length; j++){
-      if(state.balle[i].x!=state.ennemis[j].x && state.balle[i].y!=state.ennemis[j].y){
-        ctx.drawImage(imageBalleUrl,state.balle[i].x,state.balle[i].y,25,25)
-      }
-    }*/
-    ctx.drawImage(imageBalleUrl,state.balle[i].x,state.balle[i].y,25,25)
-  }
-
-  if(stateImagePerso){
-
-    if(walkcycle==false){
-      cptTmp = 0
-      if(rotate == true){
-        ctx.drawImage(imagePersoUrlD,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX,dimPersoY);
-      }
-      else{
-          ctx.drawImage(imagePersoUrl,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX,dimPersoY);
-        }
-    }
-    else{
-      if(rotate==true){
-        cptTmp= (cptTmp+1)%60
-        if(cptTmp<15)
-          ctx.drawImage(imageMarche1DUrl,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX,dimPersoY)
-        else if (cptTmp>=15 && cptTmp < 30)
-          ctx.drawImage(imageMarche2DUrl,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX-30,dimPersoY)
-        else if (cptTmp>=30 && cptTmp < 45)
-          ctx.drawImage(imageMarche3DUrl,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX,dimPersoY)
-        else{
-          ctx.drawImage(imageMarche4DUrl,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX-30,dimPersoY)
-        }
-      }
-      else{
-        cptTmp= (cptTmp+1)%60
-        if(cptTmp<15)
-          ctx.drawImage(imageMarche1Url,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX,dimPersoY)
-        else if (cptTmp>=15 && cptTmp < 30)
-          ctx.drawImage(imageMarche2Url,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX-30,dimPersoY)
-        else if (cptTmp>=30 && cptTmp < 45)
-          ctx.drawImage(imageMarche3Url,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX,dimPersoY)
-        else{
-          ctx.drawImage(imageMarche4Url,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX-30,dimPersoY)
-        }
-      }
-    }
-  }
-
-
-  
-  ctx.restore();
+//affichage des balles
+for(let i=0; i<state.balle.length; i++){
+  ctx.drawImage(imageBalleUrl,state.balle[i].x,state.balle[i].y,25,25)
 }
 
-const computeColor = (life: number, maxLife: number, baseColor: string) =>
-  rgbaTorgb(baseColor, (maxLife - life) * (1 / maxLife))
+//animations Personnage
+if(stateImagePerso){
+
+  if(walkcycle==false){
+    cptTmpPerso = 0
+    if(rotate == true){
+      ctx.drawImage(imagePersoUrlD,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX,dimPersoY);
+    }
+    else{
+        ctx.drawImage(imagePersoUrl,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX,dimPersoY);
+      }
+  }
+  else{
+    if(rotate==true){
+      cptTmpPerso= (cptTmpPerso+1)%60
+      if(cptTmpPerso<15)
+        ctx.drawImage(imageMarche1DUrl,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX,dimPersoY)
+      else if (cptTmpPerso>=15 && cptTmpPerso < 30)
+        ctx.drawImage(imageMarche2DUrl,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX-30,dimPersoY)
+      else if (cptTmpPerso>=30 && cptTmpPerso < 45)
+        ctx.drawImage(imageMarche3DUrl,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX,dimPersoY)
+      else{
+        ctx.drawImage(imageMarche4DUrl,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX-30,dimPersoY)
+      }
+    }
+    else{
+      cptTmpPerso= (cptTmpPerso+1)%60
+      if(cptTmpPerso<15)
+        ctx.drawImage(imageMarche1Url,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX,dimPersoY)
+      else if (cptTmpPerso>=15 && cptTmpPerso < 30)
+        ctx.drawImage(imageMarche2Url,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX-30,dimPersoY)
+      else if (cptTmpPerso>=30 && cptTmpPerso < 45)
+        ctx.drawImage(imageMarche3Url,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX,dimPersoY)
+      else{
+        ctx.drawImage(imageMarche4Url,state.joueur.pos.x-(dimPersoX/2),state.joueur.pos.y-(dimPersoY/2),dimPersoX-30,dimPersoY)
+      }
+    }
+  }
+}
+
+//affichage fin du niveau
+ctx.drawImage(imageCoeurUrl,5900,580,100,100)
+
+
+//le tout est englobe dans un save + restore pour que les images ne se deplacent pas par rapport à la camera
+ctx.restore();
+}
 
 export const render =
-  (ctx: CanvasRenderingContext2D/*, props: RenderProps*/, plats: Array<jeu.Plateforme>) => (state: State) => {
+  (ctx: CanvasRenderingContext2D, plats: Array<jeu.Plateforme>) => (state: State) => {
     clear(ctx)
     frame ++
     frame = frame%20
 
     displayImages(ctx)(state)
-    /*state.pos.map((c) =>
-      drawCirle(
-        ctx,
-        props,
-        c.coord,
-        computeColor(c.life, conf.BALLLIFE, COLORS.GREEN)
-      )
-    )
-    drawCirle(
-      ctx,
-      props,
-      state.player.coord,
-      computeColor(state.player.life, conf.PLAYERLIFE, COLORS.BLUE)
-    )*/
 
     
-    //console.log(plats[0][0])
     
-    /*if (state.endOfGame) {
-      const text = 'END'
-      ctx.font = '48px'
-      ctx.strokeText(text, state.size.width / 2 - 100, state.size.height / 2)
-    }*/
+    if (state.endOfGame) {
+      const text = "FIN DE LA PARTIE"
+      ctx.fillStyle = COLORS.RED
+      ctx.font = "100px serif"
+      ctx.fillText(text, ctx.canvas.width/2-420,ctx.canvas.height/2)
+    }
   }
