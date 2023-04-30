@@ -1,27 +1,15 @@
-# CPA
+# MEGA MAN : ALAYOUD Yanis , GIULIANI Carla | Basé sur le projet d'Arthur Escriou
 
 ## Pour lancer le projet
 
 ### Prérequis
 
-- nodejs
+- nodejs v 16.14.0 (pas certain que cela fonctionne avec des versions postérieures)
 
 ### Installation
 
 ```bash
 npm install
-```
-
-ou avec yarn
-
-```bash
-yarn install
-```
-
-ou à la PPTI
-
-```bash
-./yarn.sh
 ```
 
 ### Lancer le projet
@@ -30,20 +18,11 @@ ou à la PPTI
 npm run start
 ```
 
-ou avec yarn
+### Comment jouer
 
-```bash
-yarn start
-```
+- touche 'q' pour aller à gauche
+- touche 'd' pour aller à droite
+- touche 'z' pour sauter
+- touche 'espace' pour tirer
 
-ou à la PPTI
-
-```bash
-./start.sh
-```
-
-#A FAIRE
-- fluidifier le mouvement => trouver les bonnes vals + mouvement du début (petit saut)
-- gravité (cst) + saut + sol 
-- tir + ennemis 
-- plateforme (image à trouver)
+Essayez d'atteindre la fin du niveau sans perdre toutes vos vies !
